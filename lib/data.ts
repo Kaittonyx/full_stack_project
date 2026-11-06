@@ -37,3 +37,13 @@ export function orderTotal(order: Order): number {
 export function cartCount(): number {
   return cart.reduce((sum, i) => sum + i.quantity, 0);
 }
+export function removeProduct(id: string) {
+  const index = products.findIndex((p) => p.id === id);
+  if (index !== -1) {
+    products.splice(index, 1);
+  }
+}
+
+export function addProduct(product: Product) {
+  products.push(product);
+}

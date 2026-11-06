@@ -3,6 +3,7 @@ import { getSession } from "@/lib/demo-session";
 import { cartCount } from "@/lib/data";
 import { roleLabels, staffNav } from "@/lib/permissions";
 import RoleSwitcher from "./RoleSwitcher";
+import ThemeToggle from "./ThemeToggle";
 
 export default async function Header() {
   const { role, user } = await getSession();
@@ -30,6 +31,7 @@ export default async function Header() {
         </nav>
 
         <div className="header-actions">
+          <ThemeToggle />
           <RoleSwitcher current={role} />
 
           {isShopper && (

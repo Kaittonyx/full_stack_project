@@ -32,6 +32,7 @@ export const routeRoles: Record<string, Role[]> = {
   "/kitchen": ["cook", "manager", "admin"],
   "/courier": ["courier", "manager", "admin"],
   "/manager": ["manager", "admin"],
+  "/manager/menu": ["manager", "admin"],
   "/admin": ["admin"],
   "/profile": ["customer", "cook", "courier", "manager", "admin"],
 };
@@ -49,14 +50,16 @@ export const staffNav: Record<Role, NavLink[]> = {
   customer: [],
   cook: [{ href: "/kitchen", label: "👨‍🍳 Кухня" }],
   courier: [{ href: "/courier", label: "🛵 Доставки" }],
-  manager: [
+manager: [
     { href: "/manager", label: "📋 Заказы" },
+    { href: "/manager/menu", label: "🍕 Меню" },
     { href: "/kitchen", label: "👨‍🍳 Кухня" },
     { href: "/courier", label: "🛵 Доставки" },
   ],
   admin: [
     { href: "/admin", label: "📊 Админ-панель" },
     { href: "/manager", label: "📋 Заказы" },
+    { href: "/manager/menu", label: "🍕 Меню" },
     { href: "/kitchen", label: "👨‍🍳 Кухня" },
     { href: "/courier", label: "🛵 Доставки" },
   ],
