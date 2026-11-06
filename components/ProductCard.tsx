@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formatPrice } from "@/lib/labels";
 import type { Product } from "@/lib/types";
+import ProductImage from "./ProductImage";
 
 const addons = [
     { name: "Моцарелла", price: 300, emoji: "🧀" },
@@ -79,9 +80,9 @@ export default function ProductCard({ product }: { product: Product }) {
     return (
         <>
             <article className="card product-card">
-                <div className="product-pic" onClick={() => setOpen(true)}>
-                    {product.emoji}
-                </div>
+              <div className="product-pic" onClick={() => setOpen(true)}>
+                <ProductImage src={product.image} emoji={product.emoji} alt={product.name} />
+              </div>
                 <div className="product-body">
                     <div className="row-between">
                         <h3>{product.name}</h3>

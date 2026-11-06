@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ProductImage from "@/components/ProductImage";
 import { cart, getProduct } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
@@ -27,7 +28,9 @@ export default async function CartPage() {
         <div className="card">
           {lines.map(({ item, product }) => (
             <div key={`${item.productId}-${item.size ?? ""}`} className="cart-item">
-              <div className="pic">{product.emoji}</div>
+              <div className="pic">
+                <ProductImage src={product.image} emoji={product.emoji} alt={product.name} />
+              </div>
               <div className="info">
                 <h3>{product.name}</h3>
                 <p className="muted small">{item.size ?? "Стандартная порция"}</p>
