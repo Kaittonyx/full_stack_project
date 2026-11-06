@@ -1206,3 +1206,29 @@ tr:last-child td {
   color: #6b7280;
   font-size: 12px;
 }
+.add-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 16px;
+}
+
+.add-form h2 {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.add-form input,
+.add-form select {
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.add-form button {
+  grid-column: 1 / -1;
+}
