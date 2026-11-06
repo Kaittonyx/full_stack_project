@@ -22,7 +22,50 @@
   --gray-soft: #efe9e2;
   --radius: 16px;
   --shadow: 0 6px 24px rgba(74, 38, 20, 0.08);
+  --header-bg: rgba(255, 248, 240, 0.92);
+  --th-bg: #fcf5ec;
+  --column-bg: #f6ede2;
+  --pic-from: #fff3d6;
+  --pic-to: #fde8e3;
+  --footer-bg: #2a1b14;
+  --footer-ink: #e9ddd2;
+  --input-bg: #ffffff;
+  --gray-ink: #5d4f46;
   color-scheme: light;
+}
+
+/* Тёмная тема: включается атрибутом data-theme="dark" на <html> (см. ThemeToggle) */
+:root[data-theme="dark"] {
+  --bg: #17120f;
+  --surface: #221a16;
+  --ink: #f4ebe3;
+  --muted: #a89a8f;
+  --line: #3a2e27;
+  --brand: #ee4a2f;
+  --brand-dark: #d63a20;
+  --brand-soft: #3d1f19;
+  --accent: #f6b73c;
+  --accent-soft: #3a2e14;
+  --green: #4cc183;
+  --green-soft: #17301f;
+  --blue: #6ea4f2;
+  --blue-soft: #1b2a42;
+  --orange: #f2993a;
+  --orange-soft: #3a2812;
+  --purple: #a98af0;
+  --purple-soft: #2c2142;
+  --gray-soft: #2e2621;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  --header-bg: rgba(23, 18, 15, 0.92);
+  --th-bg: #2a211c;
+  --column-bg: #1d1613;
+  --pic-from: #3a2e1c;
+  --pic-to: #3d2420;
+  --footer-bg: #0f0b09;
+  --footer-ink: #cdbfb3;
+  --input-bg: #1b1411;
+  --gray-ink: #cbbdb2;
+  color-scheme: dark;
 }
 
 * {
@@ -192,7 +235,7 @@ h3 {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(255, 248, 240, 0.92);
+  background: var(--header-bg);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
@@ -311,7 +354,8 @@ h3 {
   padding: 6px 10px;
   border: none;
   border-radius: 999px;
-  background: #fff;
+  background: var(--surface);
+  color: var(--ink);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -322,8 +366,8 @@ h3 {
 .footer {
   margin-top: 40px;
   padding: 32px 0;
-  background: var(--ink);
-  color: #e9ddd2;
+  background: var(--footer-bg);
+  color: var(--footer-ink);
 }
 
 .footer-grid {
@@ -377,11 +421,20 @@ h3 {
 }
 
 .product-pic {
-  display: grid;
-  place-items: center;
-  height: 150px;
-  background: radial-gradient(circle at 30% 20%, #fff3d6, #fde8e3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 190px;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, var(--pic-from), var(--pic-to));
   font-size: 4.2rem;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  object-fit: contain;
 }
 
 .product-body {
@@ -525,7 +578,7 @@ h3 {
 
 .badge-gray {
   background: var(--gray-soft);
-  color: #5d4f46;
+  color: var(--gray-ink);
 }
 
 .badge-blue {
@@ -572,7 +625,7 @@ h3 {
   padding: 12px 14px;
   border: 2px solid var(--line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--input-bg);
   font: inherit;
   color: var(--ink);
 }
@@ -650,7 +703,7 @@ td {
 }
 
 th {
-  background: #fcf5ec;
+  background: var(--th-bg);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -691,6 +744,11 @@ tr:last-child td {
   border-radius: 14px;
   background: var(--accent-soft);
   font-size: 2rem;
+  overflow: hidden;
+}
+
+.cart-item .pic .product-img {
+  padding: 4px;
 }
 
 .cart-item .info {
@@ -773,7 +831,7 @@ tr:last-child td {
   padding: 10px 12px;
   border: 2px solid var(--line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -851,7 +909,7 @@ tr:last-child td {
   gap: 12px;
   padding: 14px;
   border-radius: var(--radius);
-  background: #f6ede2;
+  background: var(--column-bg);
 }
 
 .column-title {
@@ -868,7 +926,7 @@ tr:last-child td {
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .ticket ul {
@@ -978,4 +1036,43 @@ tr:last-child td {
   .cart-item {
     flex-wrap: wrap;
   }
+}
+
+/* ===== Переключатель день/ночь ===== */
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 64px;
+  height: 34px;
+  padding: 0 8px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: transform 0.2s;
+}
+
+:root[data-theme="dark"] .theme-toggle::after {
+  transform: translateX(30px);
+}
+
+.theme-toggle span {
+  position: relative;
+  z-index: 1;
+  line-height: 1;
 }

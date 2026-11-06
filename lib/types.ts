@@ -24,6 +24,7 @@ export interface Product {
   description: string;
   price: number;
   emoji: string;
+  image?: string;
   ingredients: string[];
   sizes?: string[];
   isAvailable: boolean;
