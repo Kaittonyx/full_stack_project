@@ -1,0 +1,343 @@
+/* ===== Конструктор пиццы (в стиле Good Pizza, Great Pizza) ===== */
+
+.pb-layout {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 270px minmax(0, 1fr) 300px;
+  align-items: start;
+}
+
+.pb-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pb-panel h3 {
+  margin-top: 8px;
+}
+
+.pb-panel h3:first-child {
+  margin-top: 0;
+}
+
+/* --- кнопки-варианты (тесто, размер, соус, сыр) --- */
+
+.pb-options,
+.pb-ing-list {
+  display: grid;
+  gap: 8px;
+}
+
+.pb-sizes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.pb-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.pb-option small {
+  color: var(--muted);
+}
+
+.pb-option:hover:not(:disabled) {
+  border-color: var(--brand);
+}
+
+.pb-option[aria-pressed="true"] {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.pb-option:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pb-sizes .pb-option {
+  align-items: center;
+  text-align: center;
+}
+
+.pb-option-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- ингредиенты справа --- */
+
+.pb-ing {
+  display: flex;
+  align-items: stretch;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.pb-ing-on {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.pb-ing-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 10px;
+  cursor: grab;
+  user-select: none;
+}
+
+.pb-ing-main:active {
+  cursor: grabbing;
+}
+
+.pb-ing-main[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pb-ing-icon {
+  flex-shrink: 0;
+  width: 2rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.pb-ing-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.pb-ing-text small {
+  color: var(--muted);
+}
+
+.pb-ing-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 4px;
+  font-weight: 800;
+}
+
+.pb-ing-count button {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* --- пепперони рисуем кружком, размер задаёт font-size родителя --- */
+
+.pb-pepperoni {
+  display: block;
+  width: 1.05em;
+  height: 1.05em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ee6044, #b02a1a 72%);
+  box-shadow: inset 0 0 0 0.07em #8a1c10;
+}
+
+/* --- стол и пицца --- */
+
+.pb-center {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.pb-board {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  aspect-ratio: 1;
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  background: repeating-conic-gradient(#fff 0 25%, #fdebd9 0 50%) 0 0 / 56px 56px;
+  box-shadow: var(--shadow);
+}
+
+.pb-board-active {
+  outline: 3px dashed var(--brand);
+  outline-offset: -10px;
+}
+
+.pb-pizza {
+  --crust: 6%;
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  container-type: inline-size;
+  filter: drop-shadow(0 10px 14px rgba(74, 38, 20, 0.3));
+  transition: width 0.25s ease;
+}
+
+.pb-pizza[data-dough="thin"] {
+  --crust: 3.5%;
+}
+
+.pb-pizza[data-dough="classic"] {
+  --crust: 6%;
+}
+
+.pb-pizza[data-dough="fluffy"],
+.pb-pizza[data-dough="cheese-crust"] {
+  --crust: 9%;
+}
+
+.pb-crust,
+.pb-base,
+.pb-sauce,
+.pb-cheese {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.pb-crust {
+  inset: 0;
+  background: radial-gradient(circle at 35% 30%, #efc27a, #d48f3a 75%);
+}
+
+.pb-pizza[data-dough="thin"] .pb-crust {
+  background: radial-gradient(circle at 35% 30%, #f3d08f, #dca64f 75%);
+}
+
+/* сырный борт: «пузырьки» сыра по краю */
+.pb-pizza[data-dough="cheese-crust"] .pb-crust::after {
+  content: "";
+  position: absolute;
+  inset: 2.2%;
+  border: 2.4cqw dotted #ffe08a;
+  border-radius: 50%;
+}
+
+.pb-base {
+  inset: var(--crust);
+  background: #f6d79a;
+  transition: inset 0.25s ease;
+}
+
+.pb-sauce {
+  inset: calc(var(--crust) + 1.2%);
+  opacity: 0.92;
+  transition: inset 0.25s ease;
+}
+
+.pb-cheese {
+  inset: calc(var(--crust) + 2.4%);
+  transition: inset 0.25s ease;
+}
+
+.pb-pieces {
+  position: absolute;
+  inset: 0;
+}
+
+.pb-piece {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 7.5cqw;
+  line-height: 1;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+  animation: pb-pop 0.18s ease-out;
+}
+
+.pb-piece:hover {
+  filter: brightness(0.8) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+}
+
+@keyframes pb-pop {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+/* --- итог и оценка --- */
+
+.pb-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pb-stars {
+  color: var(--accent);
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.pb-stars span {
+  color: var(--line);
+}
+
+.pb-price {
+  font-size: 1.6rem;
+}
+
+.pb-notes {
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+/* --- адаптив --- */
+
+@media (max-width: 1000px) {
+  .pb-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pb-center {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .pb-layout {
+    grid-template-columns: 1fr;
+  }
+}
