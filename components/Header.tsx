@@ -4,6 +4,13 @@ import { cartCount } from "@/lib/data";
 import { roleLabels, staffNav } from "@/lib/permissions";
 import RoleSwitcher from "./RoleSwitcher";
 import ThemeToggle from "./ThemeToggle";
+import {
+    Pizza,
+    ShoppingCart,
+    UserRound,
+    LogIn,
+    UserPlus, UserCircle,
+} from "lucide-react";
 
 export default async function Header() {
   const { role, user } = await getSession();
@@ -18,9 +25,12 @@ export default async function Header() {
   return (
     <header className="header">
       <div className="container header-inner">
-        <Link href="/" className="logo">
-          🍕 LINK <span>Pizza</span>
-        </Link>
+          <Link href="/" className="logo">
+              <Pizza size={27} strokeWidth={2.2} />
+              LINK <span> Pizza</span>
+          </Link>
+
+
 
         <nav className="nav" aria-label="Основная навигация">
           {links.map((l) => (
@@ -36,21 +46,27 @@ export default async function Header() {
 
           {isShopper && (
             <Link href="/cart" className="cart-link">
-              🛒 Корзина<span className="cart-count">{cartCount()}</span>
+                <ShoppingCart size={19} />
+                Корзина
+                <span className="cart-count">{cartCount()}</span>
             </Link>
           )}
 
           {user ? (
             <Link href="/profile" className="user-chip" title={roleLabels[role]}>
-              <span className="avatar">{user.name[0]}</span>
+              <span className="avatar">
+                  <UserRound size={18} />
+              </span>
               {user.name.split(" ")[0]}
             </Link>
           ) : (
             <>
               <Link href="/login" className="btn btn-ghost btn-sm">
+                  <LogIn size={16} />
                 Войти
               </Link>
               <Link href="/register" className="btn btn-primary btn-sm">
+                  <UserPlus size={16} />
                 Регистрация
               </Link>
             </>

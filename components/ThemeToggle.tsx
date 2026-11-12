@@ -1,16 +1,20 @@
+
 "use client";
 
-// Переключатель день/ночь. Тему хранит атрибут data-theme на <html>,
-// а выбор запоминается в localStorage. Начальное значение ставит скрипт в app/layout.tsx.
+import { Sun, Moon } from "lucide-react";
+
+// Переключатель день/ночь
 export default function ThemeToggle() {
   function toggle() {
     const root = document.documentElement;
     const next = root.dataset.theme === "dark" ? "light" : "dark";
+
     root.dataset.theme = next;
+
     try {
       localStorage.setItem("theme", next);
     } catch {
-      // localStorage может быть недоступен (приватный режим), тема просто не запомнится
+      // localStorage может быть недоступен
     }
   }
 
@@ -22,8 +26,8 @@ export default function ThemeToggle() {
       aria-label="Переключить тему: день или ночь"
       title="День / ночь"
     >
-      <span aria-hidden="true">☀️</span>
-      <span aria-hidden="true">🌙</span>
+      <Sun size={19} aria-hidden="true" />
+      <Moon size={19} aria-hidden="true" />
     </button>
   );
 }

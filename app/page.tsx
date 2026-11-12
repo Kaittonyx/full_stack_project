@@ -5,7 +5,21 @@ import { categories, orders, products, promos } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
 import { roleHome, roleLabels } from "@/lib/permissions";
 import { formatTime } from "@/lib/labels";
+import {
+  Pizza,
+  Gamepad2,
+  Clock3,
+  MapPin,
+  CreditCard,
+  Truck,
+  Gift,
+  Flame,
+  Percent,
+} from "lucide-react";
 
+import CategoryIcon from "@/components/CategoryIcon";
+
+const promoIcons = [Gift, Percent, Flame];
 export default async function HomePage() {
   const { role, user } = await getSession();
   const popular = products.filter((p) => p.isPopular).slice(0, 4);
@@ -36,12 +50,13 @@ export default async function HomePage() {
                 Смотреть меню
               </Link>
               <Link href="/builder" className="btn btn-ghost">
-                🎮 Собрать свою пиццу
+                <Gamepad2 size={18} />
+                 Собрать свою пиццу
               </Link>
             </div>
           </div>
           <div className="hero-art" aria-hidden="true">
-            🍕
+            <Pizza size={120} strokeWidth={1.3} />
           </div>
         </div>
       </section>
@@ -80,9 +95,13 @@ export default async function HomePage() {
           </div>
           <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
             {categories.map((c) => (
-              <Link key={c.id} href={`/catalog?category=${c.slug}`} className="card category-tile">
-                <span className="emoji">{c.emoji}</span>
-                {c.name}
+              <Link
+                  key={c.id}
+                  href={`/catalog?category=${c.slug}`}
+                  className="card category-tile"
+                >
+                <CategoryIcon name={c.name} size={32} />
+                <span>{c.name}</span>
               </Link>
             ))}
           </div>
@@ -111,15 +130,20 @@ export default async function HomePage() {
             <h2>Акции и предложения</h2>
           </div>
           <div className="grid grid-3">
-            {promos.banners.map((b: { id: string; emoji: string; title: string; text: string; tone: string }) => (
-              <div key={b.id} className={`banner banner-${b.tone}`}>
-                <span className="emoji">{b.emoji}</span>
-                <div>
-                  <h3>{b.title}</h3>
-                  <p className="small muted">{b.text}</p>
-                </div>
-              </div>
-            ))}
+            {promos.banners.map((b, index) => {
+              const Icon = promoIcons[index % promoIcons.length];
+
+              return (
+                  <div key={b.id} className={`banner banner-${b.tone}`}>
+                    <Icon size={36} strokeWidth={1.8} />
+
+                    <div>
+                      <h3>{b.title}</h3>
+                      <p className="small muted">{b.text}</p>
+                    </div>
+                  </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -131,21 +155,21 @@ export default async function HomePage() {
           </div>
           <div className="card facts">
             <div className="fact">
-              <span className="emoji">⏱️</span>
+              <Clock3 size={32} />
               <div>
                 <h3>40 минут</h3>
                 <p className="small muted">Среднее время от заказа до двери.</p>
               </div>
             </div>
             <div className="fact">
-              <span className="emoji">📍</span>
+              <MapPin size={32} />
               <div>
                 <h3>По всему городу</h3>
                 <p className="small muted">Доставка от 500 ₸, бесплатно от 8 000 ₸.</p>
               </div>
             </div>
             <div className="fact">
-              <span className="emoji">💳</span>
+              <CreditCard size={32} />
               <div>
                 <h3>Удобная оплата</h3>
                 <p className="small muted">Картой онлайн или наличными курьеру.</p>

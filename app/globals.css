@@ -15,6 +15,8 @@
   --green-soft: #e1f3e8;
   --blue: #2f6fd1;
   --blue-soft: #e3edfb;
+  --card: #ffffff;
+  --text: #222222;
   --orange: #d9730d;
   --orange-soft: #fdebd5;
   --purple: #7a49c6;
@@ -37,6 +39,8 @@
 /* Тёмная тема: включается атрибутом data-theme="dark" на <html> (см. ThemeToggle) */
 :root[data-theme="dark"] {
   --bg: #17120f;
+  --card: #1e1e1e;
+  --text: #ffffff;
   --surface: #221a16;
   --ink: #f4ebe3;
   --muted: #a89a8f;
@@ -1486,4 +1490,137 @@ tr:last-child td {
   100% {
     transform: translate(-10px, 105vh);
   }
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chip svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.chip:hover {
+  background-color: #f3f3f3;
+}
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo svg {
+  color: #e63946;
+  flex-shrink: 0;
+}
+
+.footer-contact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.footer-contact svg {
+  color: #e63946;
+  flex-shrink: 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.logo svg {
+  color: #e63946;
+  flex-shrink: 0;
+}
+
+.cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+/* Hero icon */
+.hero-art svg {
+  color: #e63946;
+}
+
+/* Category icons */
+.category-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.category-tile svg {
+  color: #e63946;
+}
+
+/* Promo icons */
+.banner > svg {
+  flex-shrink: 0;
+  color: #e63946;
+}
+
+/* Delivery facts */
+.fact > svg {
+  flex-shrink: 0;
+  color: #e63946;
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--card);
+  color: var(--text);
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle svg {
+  width: 19px;
+  height: 19px;
+}
+
+.theme-toggle:hover {
+  background: var(--surface);
+}
+
+[data-theme="light"] .theme-toggle svg:first-child {
+  color: #e9a23b;
+}
+
+[data-theme="dark"] .theme-toggle svg:last-child {
+  color: #8b9cff;
 }
