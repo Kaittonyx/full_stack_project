@@ -6,12 +6,12 @@ import type { Product } from "@/lib/types";
 import ProductImage from "./ProductImage";
 
 const addons = [
-    { name: "Моцарелла", price: 300, emoji: "🧀" },
-    { name: "Чеддер и пармезан", price: 300, emoji: "🧀" },
-    { name: "Халапеньо", price: 100, emoji: "🌶️" },
-    { name: "Ветчина", price: 400, emoji: "🥓" },
-    { name: "Грибы", price: 300, emoji: "🍄" },
-    { name: "Пепперони", price: 400, emoji: "🍕" },
+    { name: "Моцарелла", price: 300, image: "/images/addons/mozarela.png" },
+    { name: "Чеддер и пармезан", price: 300, image: "/images/addons/cheder parmezan.png" },
+    { name: "Халапеньо", price: 100, image: "/images/addons/halapeno.png" },
+    { name: "Ветчина", price: 400, image: "/images/addons/ham.png" },
+    { name: "Грибы", price: 300, image: "/images/addons/mushroms.png" },
+    { name: "Пепперони", price: 400, image: "/images/addons/pepperoni.png" },
 ];
 const nutritionData: Record<
     string,
@@ -69,6 +69,8 @@ export default function ProductCard({ product }: { product: Product }) {
         );
     }
   const sizeIndex = Math.max(product.sizes?.findIndex((s) => s === size) ?? 0, 0);
+    const pizzaScale = 0.7 + sizeIndex * 0.15;
+    const isThin = dough === "Тонкое";
   const extrasPrice = addons
       .filter((a) => extras.includes(a.name))
       .reduce((sum, a) => sum + a.price, 0);
@@ -80,9 +82,13 @@ export default function ProductCard({ product }: { product: Product }) {
     return (
         <>
             <article className="card product-card">
-              <div className="product-pic" onClick={() => setOpen(true)}>
-                <ProductImage src={product.image} emoji={product.emoji} alt={product.name} />
-              </div>
+                <div className="product-pic" onClick={() => setOpen(true)}>
+                    {product.image ? (
+                        <img src={product.image} alt={product.name} />
+                    ) : (
+                        product.emoji
+                    )}
+                </div>
                 <div className="product-body">
                     <div className="row-between">
                         <h3>{product.name}</h3>
@@ -131,12 +137,26 @@ export default function ProductCard({ product }: { product: Product }) {
                             </div>
                         )}
                         <div className="modal-pic">
-                            <span
-                                className="pizza-emoji"
-                                style={{ transform: `scale(${0.7 + sizeIndex * 0.15})` }}
-                            >
-                                {product.emoji}
-                            </span>
+                            {product.image && hasSizes && (
+                                <div className="pizza-wrap" style={{ transform: `scale(${pizzaScale})` }}>
+                                    <img
+                                        className="pizza-img"
+                                        src={product.image}
+                                        alt={product.name}
+                                        style={{ transform: `scale(${isThin ? 1.15 : 1})` }}
+                                    />
+                                </div>
+                            )}
+
+                            {product.image && !hasSizes && (
+                                <img className="dish-img" src={product.image} alt={product.name} />
+                            )}
+
+                            {!product.image && (
+                                <span className="pizza-emoji" style={{ transform: `scale(${pizzaScale})` }}>
+      {product.emoji}
+    </span>
+                            )}
                         </div>
                         <div className="modal-info">
                             <h2>{product.name}</h2>
@@ -146,7 +166,7 @@ export default function ProductCard({ product }: { product: Product }) {
                                         <button
                                             key={item}
                                             type="button"
-                                            className={removed.includes(item) ? "ingredient removed" : "ingredient"}
+                                            className={removed.includes(item) ? "dish-ingredient removed" : "dish-ingredient"}
                                             onClick={() => toggleIngredient(item)}
                                         >
                                             {item}
@@ -197,7 +217,7 @@ export default function ProductCard({ product }: { product: Product }) {
                                                 className={extras.includes(a.name) ? "extra active" : "extra"}
                                                 onClick={() => toggleExtra(a.name)}
                                             >
-                                                <span className="extra-emoji">{a.emoji}</span>
+                                                <img className="extra-img" src={a.image} alt={a.name} />
                                                 <span className="extra-name">{a.name}</span>
                                                 <span className="extra-price">{formatPrice(a.price)}</span>
                                             </button>

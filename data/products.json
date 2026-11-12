@@ -6,7 +6,7 @@
     "description": "Классика: томатный соус, моцарелла и свежий базилик.",
     "price": 3290,
     "emoji": "🍕",
-    "image": "/images/products/p-margherita.webp",
+    "image":"/images/pizzas/Margarita.png",
     "ingredients": [
       "Томатный соус",
       "Моцарелла",
@@ -27,7 +27,7 @@
     "description": "Острая колбаска пепперони, моцарелла и фирменный томатный соус.",
     "price": 4190,
     "emoji": "🍕",
-    "image": "/images/products/p-pepperoni.webp",
+    "image": "/images/pizzas/Peperoni.png",
     "ingredients": [
       "Томатный соус",
       "Моцарелла",
@@ -48,7 +48,7 @@
     "description": "Моцарелла, чеддер, пармезан и дор блю на сливочной основе.",
     "price": 4590,
     "emoji": "🧀",
-    "image": "/images/products/p-four-cheese.webp",
+    "image": "/images/pizzas/four chese.png",
     "ingredients": [
       "Сливочный соус",
       "Моцарелла",
@@ -71,7 +71,7 @@
     "description": "Ветчина, ананасы и много моцареллы.",
     "price": 4090,
     "emoji": "🍍",
-    "image": "/images/products/p-hawaiian.webp",
+    "image": "/images/pizzas/Hawai.png",
     "ingredients": [
       "Томатный соус",
       "Моцарелла",
@@ -93,7 +93,7 @@
     "description": "Бекон, ветчина, говядина и пепперони для настоящих мясоедов.",
     "price": 4890,
     "emoji": "🥓",
-    "image": "/images/products/p-meat.webp",
+    "image": "/images/pizzas/Meat.png",
     "ingredients": [
       "Томатный соус",
       "Моцарелла",
@@ -117,7 +117,7 @@
     "description": "Шампиньоны, лук и сливочный соус с чесноком.",
     "price": 3890,
     "emoji": "🍄",
-    "image": "/images/products/p-mushroom.webp",
+    "image": "/images/pizzas/Mushrom.png",
     "ingredients": [
       "Сливочный соус",
       "Моцарелла",
@@ -139,7 +139,7 @@
     "description": "Газированный напиток, подаётся холодным.",
     "price": 690,
     "emoji": "🥤",
-    "image": "/images/products/d-cola.webp",
+    "image": "/images/products/coke.png",
     "ingredients": [],
     "isAvailable": true,
     "isPopular": false
@@ -151,7 +151,7 @@
     "description": "Домашний морс из клюквы и смородины.",
     "price": 790,
     "emoji": "🫐",
-    "image": "/images/products/d-mors.webp",
+    "image": "/images/products/mors.png",
     "ingredients": [],
     "isAvailable": true,
     "isPopular": false
@@ -163,7 +163,7 @@
     "description": "Лимон, лайм и немного мяты.",
     "price": 790,
     "emoji": "🍋",
-    "image": "/images/products/d-lemonade.webp",
+    "image": "/images/products/lemon.png",
     "ingredients": [],
     "isAvailable": true,
     "isPopular": false
@@ -175,7 +175,7 @@
     "description": "Хрустящий картофель с морской солью.",
     "price": 1190,
     "emoji": "🍟",
-    "image": "/images/products/s-fries.webp",
+    "image": "/images/products/fries.png",
     "ingredients": [
       "Картофель",
       "Соль"
@@ -190,7 +190,7 @@
     "description": "Девять нежных кусочков в золотистой панировке.",
     "price": 1790,
     "emoji": "🍗",
-    "image": "/images/products/s-nuggets.webp",
+    "image": "/images/products/nugets.png",
     "ingredients": [
       "Куриное филе",
       "Панировка"
@@ -205,7 +205,7 @@
     "description": "Моцарелла в хрустящей корочке.",
     "price": 1490,
     "emoji": "🧀",
-    "image": "/images/products/s-cheese-sticks.webp",
+    "image": "/images/products/cheese stick.png",
     "ingredients": [
       "Моцарелла",
       "Панировка"
@@ -220,7 +220,7 @@
     "description": "Нежный сливочный чизкейк с ягодным соусом.",
     "price": 1590,
     "emoji": "🍰",
-    "image": "/images/products/ds-cheesecake.webp",
+    "image": "/images/products/new york.png",
     "ingredients": [
       "Сливочный сыр",
       "Печенье",
@@ -236,7 +236,7 @@
     "description": "Шоколадный десерт с грецким орехом.",
     "price": 1290,
     "emoji": "🍫",
-    "image": "/images/products/ds-brownie.webp",
+    "image": "/images/products/brown.png",
     "ingredients": [
       "Шоколад",
       "Грецкий орех"
@@ -251,7 +251,7 @@
     "description": "Сливочный соус для корочек и закусок.",
     "price": 290,
     "emoji": "🥫",
-    "image": "/images/products/sc-cheese.webp",
+    "image": "/images/products/sauce cheese.png",
     "ingredients": [],
     "isAvailable": true,
     "isPopular": false
@@ -263,7 +263,7 @@
     "description": "Дымный соус с лёгкой сладостью.",
     "price": 290,
     "emoji": "🥫",
-    "image": "/images/products/sc-bbq.webp",
+    "image": "/images/products/barbeque sauce.png",
     "ingredients": [],
     "isAvailable": true,
     "isPopular": false

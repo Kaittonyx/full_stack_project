@@ -1077,22 +1077,7 @@ tr:last-child td {
   z-index: 1;
   line-height: 1;
 }
-.card-hover {
-  position: absolute;
-  inset: 0;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 15px;
-  background: rgba(255, 255, 255, 0.92);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.product-pic:hover .card-hover {
-  opacity: 1;
-}
+
 .product-pic {
   cursor: pointer;
 }
@@ -1199,7 +1184,7 @@ tr:last-child td {
   gap: 4px 12px;
 }
 
-.ingredient {
+.dish-ingredient {
   background: none;
   border: none;
   padding: 0;
@@ -1208,7 +1193,7 @@ tr:last-child td {
   border-bottom: 1px dotted #999;
 }
 
-.ingredient.removed {
+.dish-ingredient.removed {
   text-decoration: line-through;
   opacity: 0.4;
 }
@@ -1240,7 +1225,31 @@ tr:last-child td {
   border-color: #d63a1f;
   background: #fff3ef;
 }
+.product-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 12px;
+  mix-blend-mode: multiply;
+}
 
+.pizza-wrap {
+  width: 85%;
+  max-width: 380px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: transform 0.3s;
+  mix-blend-mode: multiply;
+}
+
+.pizza-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
 .extra-emoji {
   font-size: 32px;
 }
@@ -1327,4 +1336,154 @@ tr:last-child td {
 
 .add-form button {
   grid-column: 1 / -1;
+}
+.extra-img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.dish-img {
+  width: 80%;
+  max-width: 340px;
+  max-height: 340px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .info-panel,
+:root[data-theme="dark"] .add-form {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .modal-close,
+:root[data-theme="dark"] .dish-ingredient {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .dish-ingredient {
+  border-bottom-color: var(--muted);
+}
+
+:root[data-theme="dark"] .size-btn,
+:root[data-theme="dark"] .extra,
+:root[data-theme="dark"] .info-btn {
+  background: var(--gray-soft);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .size-btn.active {
+  background: var(--brand);
+  color: #fff;
+}
+
+:root[data-theme="dark"] .extra.active {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+:root[data-theme="dark"] .info-title,
+:root[data-theme="dark"] .info-note {
+  color: var(--muted);
+}
+
+:root[data-theme="dark"] .add-form input,
+:root[data-theme="dark"] .add-form select {
+  background: var(--input-bg);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+
+:root[data-theme="dark"] .product-pic,
+:root[data-theme="dark"] .modal-pic {
+  background: linear-gradient(135deg, #fff3e8, #ffe1d6);
+}
+.snow {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.snowflake {
+  position: absolute;
+  top: -20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #bcd3f0;
+  box-shadow: 0 0 6px rgba(160, 200, 255, 0.8);
+  opacity: 0.85;
+  animation-name: snow-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes snow-fall {
+  0% {
+    transform: translate(0, -20px);
+  }
+  50% {
+    transform: translate(25px, 50vh);
+  }
+  100% {
+    transform: translate(-10px, 105vh);
+  }
+}
+
+
+:root[data-theme="dark"] .extra-img {
+  mix-blend-mode: normal;
+  background: #fff;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+:root[data-theme="dark"] .pb-option:not([aria-pressed="true"]) {
+  background: var(--gray-soft);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .pb-ing:not(.pb-ing-on) {
+  background: var(--gray-soft);
+}
+
+:root[data-theme="dark"] .pb-ing-main {
+  background: transparent;
+  color: var(--ink);
+}
+.snow {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.snowflake {
+  position: absolute;
+  top: -20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #bcd3f0;
+  box-shadow: 0 0 6px rgba(160, 200, 255, 0.8);
+  opacity: 0.85;
+  animation-name: snow-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes snow-fall {
+  0% {
+    transform: translate(0, -20px);
+  }
+  50% {
+    transform: translate(25px, 50vh);
+  }
+  100% {
+    transform: translate(-10px, 105vh);
+  }
 }
