@@ -44,25 +44,25 @@ export function canAccess(role: Role, path: string): boolean {
   return !allowed || allowed.includes(role);
 }
 
-export type NavLink = { href: string; label: string };
 
-// Ссылки в боковом меню сотрудников
+
+export type NavLink = { href: string; label: string; icon?: string };
 export const staffNav: Record<Role, NavLink[]> = {
   guest: [],
   customer: [],
-  cook: [{ href: "/kitchen", label: "👨‍🍳 Кухня" }],
-  courier: [{ href: "/courier", label: "🛵 Доставки" }],
+  cook: [{ href: "/kitchen", label: "Кухня", icon: "kitchen" }],
+  courier: [{ href: "/courier", label: "Доставки", icon: "delivery" }],
   manager: [
-    { href: "/manager", label: "📋 Заказы" },
-    { href: "/manager/menu", label: "🍕 Меню" },
-    { href: "/kitchen", label: "👨‍🍳 Кухня" },
-    { href: "/courier", label: "🛵 Доставки" },
+    { href: "/manager", label: "Заказы", icon: "orders" },
+    { href: "/manager/menu", label: "Меню", icon: "menu" },
+    { href: "/kitchen", label: "Кухня", icon: "kitchen" },
+    { href: "/courier", label: "Доставки", icon: "delivery" },
   ],
   admin: [
-    { href: "/admin", label: "📊 Админ-панель" },
-    { href: "/manager", label: "📋 Заказы" },
-    { href: "/manager/menu", label: "🍕 Меню" },
-    { href: "/kitchen", label: "👨‍🍳 Кухня" },
-    { href: "/courier", label: "🛵 Доставки" },
+    { href: "/admin", label: "Админ-панель", icon: "admin" },
+    { href: "/manager", label: "Заказы", icon: "orders" },
+    { href: "/manager/menu", label: "Меню", icon: "menu" },
+    { href: "/kitchen", label: "Кухня", icon: "kitchen" },
+    { href: "/courier", label: "Доставки", icon: "delivery" },
   ],
 };

@@ -1676,3 +1676,19 @@ tr:last-child td {
   align-items: center;
   gap: 8px;
 }
+.qty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
