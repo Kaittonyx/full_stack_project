@@ -1,7 +1,8 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import StatusBadge from "@/components/StatusBadge";
-import { categories, orders, products, promos } from "@/lib/data";
+import { categories, products, promos } from "@/lib/data";
+import { getOrdersByCustomer } from "@/lib/orders";
 import { getSession } from "@/lib/demo-session";
 import { roleHome, roleLabels } from "@/lib/permissions";
 import { formatTime } from "@/lib/labels";
@@ -26,8 +27,8 @@ export default async function HomePage() {
   const isStaff = role !== "guest" && role !== "customer";
   const activeOrder =
     role === "customer"
-      ? orders.find(
-          (o) => o.customerId === user?.id && !["DELIVERED", "CANCELLED"].includes(o.status),
+      ? getOrdersByCustomer(user?.id ?? "").find(
+          (o) => !["DELIVERED", "CANCELLED"].includes(o.status),
         )
       : undefined;
 

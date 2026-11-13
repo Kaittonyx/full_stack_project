@@ -1,17 +1,24 @@
 import AccessDenied from "@/components/AccessDenied";
-import { orders } from "@/lib/data";
+import AutoRefresh from "@/components/AutoRefresh";
+import { getUser } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
 import { formatTime } from "@/lib/labels";
+import { kitchenFinish, kitchenStart } from "@/lib/order-actions";
+import { getOrdersByStatus } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import type { OrderStatus } from "@/lib/types";
 
-const columns: { status: OrderStatus; title: string; action: string | null }[] = [
-  { status: "CONFIRMED", title: "Новые", action: "Принять в работу" },
-  { status: "PREPARING", title: "Готовятся", action: "Отметить готовым" },
-  { status: "READY", title: "Готовы к выдаче", action: null },
+const columns: {
+  statuses: OrderStatus[];
+  title: string;
+  action: ((formData: FormData) => Promise<void>) | null;
+  actionLabel: string;
+}[] = [
+  { statuses: ["CONFIRMED"], title: "Новые", action: kitchenStart, actionLabel: "Принять в работу" },
+  { statuses: ["PREPARING"], title: "Готовятся", action: kitchenFinish, actionLabel: "Отметить готовым" },
+  { statuses: ["READY", "ASSIGNED_TO_COURIER"], title: "Ждут курьера", action: null, actionLabel: "" },
 ];
 
-// Макет панели повара. Смена статусов будет работать через API кухни (разработчик №4).
 export default async function KitchenPage() {
   const { role } = await getSession();
 
@@ -21,16 +28,19 @@ export default async function KitchenPage() {
 
   return (
     <>
+      <AutoRefresh seconds={4} />
       <div className="page-head">
         <h1>Кухня</h1>
-        <p className="muted">Очередь заказов. Карточки обновляются каждые несколько секунд.</p>
+        <p className="muted">
+          Очередь заказов. Когда вы отметите заказ готовым, курьер назначится автоматически.
+        </p>
       </div>
 
       <div className="kanban">
         {columns.map((col) => {
-          const list = orders.filter((o) => o.status === col.status);
+          const list = getOrdersByStatus(...col.statuses);
           return (
-            <div key={col.status} className="column">
+            <div key={col.title} className="column">
               <div className="column-title">
                 <span>{col.title}</span>
                 <span className="badge badge-gray">{list.length}</span>
@@ -49,14 +59,21 @@ export default async function KitchenPage() {
                       <li key={idx}>
                         {i.name}
                         {i.size ? `, ${i.size}` : ""} ×{i.quantity}
+                        {i.details && <div className="detail">{i.details}</div>}
                       </li>
                     ))}
                   </ul>
                   {o.comment && <div className="note">💬 {o.comment}</div>}
+                  {o.courierId && (
+                    <div className="small muted">🛵 Курьер: {getUser(o.courierId)?.name}</div>
+                  )}
                   {col.action && (
-                    <button type="button" className="btn btn-primary btn-sm">
-                      {col.action}
-                    </button>
+                    <form action={col.action}>
+                      <input type="hidden" name="id" value={o.id} />
+                      <button type="submit" className="btn btn-primary btn-sm">
+                        {col.actionLabel}
+                      </button>
+                    </form>
                   )}
                 </article>
               ))}

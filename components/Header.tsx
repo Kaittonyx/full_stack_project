@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSession } from "@/lib/demo-session";
-import { cartCount } from "@/lib/data";
+import { getCartCount } from "@/lib/cart";
+import { users } from "@/lib/data";
 import { roleLabels, staffNav } from "@/lib/permissions";
 import RoleSwitcher from "./RoleSwitcher";
 import ThemeToggle from "./ThemeToggle";
@@ -15,10 +16,12 @@ import {
 export default async function Header() {
   const { role, user } = await getSession();
   const isShopper = role === "guest" || role === "customer";
+  const count = isShopper ? await getCartCount() : 0;
   const links = isShopper
     ? [
         { href: "/catalog", label: "Меню" },
         { href: "/builder", label: "Конструктор" },
+        ...(role === "customer" ? [{ href: "/orders", label: "Мои заказы" }] : []),
       ]
     : [{ href: "/catalog", label: "Меню" }, ...staffNav[role]];
 
@@ -42,13 +45,16 @@ export default async function Header() {
 
         <div className="header-actions">
           <ThemeToggle />
-          <RoleSwitcher current={role} />
+          <RoleSwitcher
+            currentId={user?.id ?? null}
+            users={users.map((u) => ({ id: u.id, name: u.name, role: u.role }))}
+          />
 
           {isShopper && (
             <Link href="/cart" className="cart-link">
                 <ShoppingCart size={19} />
                 Корзина
-                <span className="cart-count">{cartCount()}</span>
+                <span className="cart-count">{count}</span>
             </Link>
           )}
 

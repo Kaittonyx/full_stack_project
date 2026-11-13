@@ -1170,7 +1170,7 @@ tr:last-child td {
 }
 
 .modal-pic {
-  background: linear-gradient(135deg, var(--pic-from), var(--pic-to));
+  background: linear-gradient(135deg, #fff3e8, #ffe1d6);
   border-radius: 20px;
 }
 
@@ -1623,4 +1623,39 @@ tr:last-child td {
 
 [data-theme="dark"] .theme-toggle svg:last-child {
   color: #8b9cff;
+}
+/* ===== Прогресс заказа ===== */
+.steps {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+.steps .step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  opacity: 0.5;
+}
+.steps .step.done {
+  opacity: 1;
+  font-weight: 600;
+}
+.steps .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+}
+.steps .step.done .dot {
+  background: var(--brand);
+  opacity: 1;
+}
+.ticket .detail {
+  font-size: 0.85rem;
+  opacity: 0.75;
 }

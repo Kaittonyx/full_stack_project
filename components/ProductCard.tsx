@@ -1,18 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { addToCart } from "@/lib/cart-actions";
+import { addons, SIZE_STEP_PRICE, doughNames } from "@/lib/menu";
 import { formatPrice } from "@/lib/labels";
 import type { Product } from "@/lib/types";
 import ProductImage from "./ProductImage";
 
-const addons = [
-    { name: "Моцарелла", price: 300, image: "/images/addons/mozarela.png" },
-    { name: "Чеддер и пармезан", price: 300, image: "/images/addons/cheder parmezan.png" },
-    { name: "Халапеньо", price: 100, image: "/images/addons/halapeno.png" },
-    { name: "Ветчина", price: 400, image: "/images/addons/ham.png" },
-    { name: "Грибы", price: 300, image: "/images/addons/mushroms.png" },
-    { name: "Пепперони", price: 400, image: "/images/addons/pepperoni.png" },
-];
 const nutritionData: Record<
     string,
     { kcal: number; protein: number; fat: number; carbs: number; weights: Record<string, number> }
@@ -46,7 +40,9 @@ export default function ProductCard({ product }: { product: Product }) {
   const hasSizes = Boolean(product.sizes?.length);
   const [open, setOpen] = useState(false);
   const [size, setSize] = useState(product.sizes?.[0]);
-  const [dough, setDough] = useState("Традиционное");
+  const [dough, setDough] = useState(doughNames[0]);
+  const [pending, startTransition] = useTransition();
+  const [added, setAdded] = useState(false);
   const [removed, setRemoved] = useState<string[]>([]);
   const [extras, setExtras] = useState<string[]>([]);
   const [showInfo, setShowInfo] = useState(false);
@@ -71,10 +67,25 @@ export default function ProductCard({ product }: { product: Product }) {
   const sizeIndex = Math.max(product.sizes?.findIndex((s) => s === size) ?? 0, 0);
     const pizzaScale = 0.7 + sizeIndex * 0.15;
     const isThin = dough === "Тонкое";
+
+  function buy() {
+    startTransition(async () => {
+      await addToCart({
+        productId: product.id,
+        size: hasSizes ? size : undefined,
+        dough: hasSizes ? dough : undefined,
+        extras,
+        removed,
+      });
+      setAdded(true);
+      setOpen(false);
+      setTimeout(() => setAdded(false), 1500);
+    });
+  }
   const extrasPrice = addons
       .filter((a) => extras.includes(a.name))
       .reduce((sum, a) => sum + a.price, 0);
-  const currentPrice = product.price + sizeIndex * 600 + extrasPrice;
+  const currentPrice = product.price + sizeIndex * SIZE_STEP_PRICE + extrasPrice;
   const info = nutritionData[product.name];
   const weight = info && size ? info.weights[size] ?? 0 : 0;
   const totalKcal = info ? Math.round((info.kcal * weight) / 100) : 0;
@@ -101,8 +112,13 @@ export default function ProductCard({ product }: { product: Product }) {
               {hasSizes ? "от " : ""}
                 {formatPrice(product.price)}
             </span>
-                        <button type="button" className="btn btn-primary btn-sm" disabled={!product.isAvailable}>
-                            В корзину
+                        <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            disabled={!product.isAvailable || pending}
+                            onClick={hasSizes ? () => setOpen(true) : buy}
+                        >
+                            {added ? "Добавлено ✓" : hasSizes ? "Выбрать" : "В корзину"}
                         </button>
                     </div>
                 </div>
@@ -194,7 +210,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
                             {hasSizes && (
                                 <div className="size-switch">
-                                    {["Традиционное", "Тонкое"].map((d) => (
+                                    {doughNames.map((d) => (
                                         <button
                                             key={d}
                                             type="button"
@@ -226,7 +242,12 @@ export default function ProductCard({ product }: { product: Product }) {
                                 </>
                             )}
 
-                            <button type="button" className="btn btn-primary modal-buy" disabled={!product.isAvailable}>
+                            <button
+                                type="button"
+                                className="btn btn-primary modal-buy"
+                                disabled={!product.isAvailable || pending}
+                                onClick={buy}
+                            >
                                 В корзину за {formatPrice(currentPrice)}
                             </button>
                         </div>

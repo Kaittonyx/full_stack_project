@@ -1,11 +1,14 @@
 import AccessDenied from "@/components/AccessDenied";
+import AutoRefresh from "@/components/AutoRefresh";
 import StatusBadge from "@/components/StatusBadge";
-import { getUser, orders, orderTotal, users } from "@/lib/data";
+import { getUser, orderTotal, users } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
-import { formatPrice, formatTime } from "@/lib/labels";
+import { formatDate, formatPrice, formatTime } from "@/lib/labels";
+import { managerAssignCourier, managerCancel } from "@/lib/order-actions";
+import { getOrders, isFinal } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
 
-// Макет панели менеджера: все заказы, подтверждение и назначение курьеров.
+// Все заказы: можно сменить курьера до выезда и отменить заказ.
 export default async function ManagerPage() {
   const { role } = await getSession();
 
@@ -14,13 +17,17 @@ export default async function ManagerPage() {
   }
 
   const couriers = users.filter((u) => u.role === "courier");
-  const today = orders.filter((o) => o.createdAt.startsWith("2026-10-30"));
+  const orders = getOrders();
+  const activeCount = orders.filter((o) => !isFinal(o.status)).length;
 
   return (
     <>
+      <AutoRefresh seconds={5} />
       <div className="page-head">
         <h1>Заказы</h1>
-        <p className="muted">Все заказы за сегодня: {today.length}</p>
+        <p className="muted">
+          Всего: {orders.length}, в работе: {activeCount}
+        </p>
       </div>
 
       <div className="table-wrap">
@@ -37,56 +44,71 @@ export default async function ManagerPage() {
             </tr>
           </thead>
           <tbody>
-            {today.map((o) => {
+            {orders.length === 0 && (
+              <tr>
+                <td colSpan={7} className="muted">
+                  Заказов пока нет
+                </td>
+              </tr>
+            )}
+            {orders.map((o) => {
               const customer = getUser(o.customerId);
-              const needsCourier = o.status === "READY";
+              const canReassign = o.status === "READY" || o.status === "ASSIGNED_TO_COURIER";
               return (
                 <tr key={o.id}>
                   <td>
                     <strong>{o.number}</strong>
                   </td>
-                  <td>{formatTime(o.createdAt)}</td>
+                  <td>
+                    {formatDate(o.createdAt)}, {formatTime(o.createdAt)}
+                  </td>
                   <td>{customer?.name}</td>
                   <td>{formatPrice(orderTotal(o))}</td>
                   <td>
                     <StatusBadge status={o.status} />
                   </td>
                   <td>
-                    {o.courierId ? (
-                      getUser(o.courierId)?.name
-                    ) : needsCourier ? (
-                      <select className="select" defaultValue="" aria-label="Назначить курьера">
-                        <option value="" disabled>
-                          Выбрать…
-                        </option>
-                        {couriers.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
+                    {canReassign ? (
+                      <form
+                        action={managerAssignCourier}
+                        className="row"
+                        style={{ flexWrap: "nowrap", gap: 6 }}
+                      >
+                        <input type="hidden" name="id" value={o.id} />
+                        <select
+                          className="select"
+                          name="courierId"
+                          defaultValue={o.courierId ?? ""}
+                          aria-label="Курьер"
+                        >
+                          <option value="" disabled>
+                            Выбрать…
                           </option>
-                        ))}
-                      </select>
+                          {couriers.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                        <button type="submit" className="btn btn-ghost btn-sm">
+                          {o.courierId ? "Сменить" : "Назначить"}
+                        </button>
+                      </form>
+                    ) : o.courierId ? (
+                      getUser(o.courierId)?.name
                     ) : (
                       <span className="muted">—</span>
                     )}
                   </td>
                   <td className="right">
-                    <div className="row" style={{ justifyContent: "flex-end", flexWrap: "nowrap" }}>
-                      {o.status === "PENDING" && (
-                        <button type="button" className="btn btn-primary btn-sm">
-                          Подтвердить
-                        </button>
-                      )}
-                      {needsCourier && (
-                        <button type="button" className="btn btn-primary btn-sm">
-                          Назначить
-                        </button>
-                      )}
-                      {!["DELIVERED", "CANCELLED"].includes(o.status) && (
-                        <button type="button" className="btn btn-ghost btn-sm">
+                    {!isFinal(o.status) && (
+                      <form action={managerCancel}>
+                        <input type="hidden" name="id" value={o.id} />
+                        <button type="submit" className="btn btn-ghost btn-sm">
                           Отменить
                         </button>
-                      )}
-                    </div>
+                      </form>
+                    )}
                   </td>
                 </tr>
               );

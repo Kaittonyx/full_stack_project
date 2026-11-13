@@ -1,15 +1,16 @@
 import { cookies } from "next/headers";
 import { users } from "./data";
-import { isRole, type Role } from "./permissions";
+import type { Role } from "./permissions";
 import type { User } from "./types";
 
-// ДЕМО: роль берётся из cookie "demo_role", которую выставляет переключатель в шапке.
-// Это заглушка для показа интерфейсов разных ролей. Настоящая авторизация
-// (сессии, пароли, проверка на сервере) — задача разработчика №1.
+// ДЕМО: пользователь берётся из cookie "demo_user" (id из data/users.json),
+// которую выставляет переключатель в шапке. Это заглушка вместо настоящего входа
+// (сессии, пароли — задача разработчика №1). Весь остальной код получает пользователя
+// только через getSession(), так что при появлении реальной авторизации
+// достаточно заменить эту функцию.
 export async function getSession(): Promise<{ role: Role; user: User | null }> {
   const store = await cookies();
-  const raw = store.get("demo_role")?.value;
-  const role: Role = isRole(raw) ? raw : "guest";
-  const user = role === "guest" ? null : (users.find((u) => u.role === role) ?? null);
-  return { role, user };
+  const id = store.get("demo_user")?.value;
+  const user = users.find((u) => u.id === id) ?? null;
+  return { role: user ? user.role : "guest", user };
 }

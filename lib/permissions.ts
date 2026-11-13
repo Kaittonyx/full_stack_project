@@ -35,6 +35,8 @@ export const routeRoles: Record<string, Role[]> = {
   "/manager/menu": ["manager", "admin"],
   "/admin": ["admin"],
   "/profile": ["customer", "cook", "courier", "manager", "admin"],
+  "/orders": ["customer"],
+  "/checkout": ["customer"],
 };
 
 export function canAccess(role: Role, path: string): boolean {
@@ -50,7 +52,7 @@ export const staffNav: Record<Role, NavLink[]> = {
   customer: [],
   cook: [{ href: "/kitchen", label: "👨‍🍳 Кухня" }],
   courier: [{ href: "/courier", label: "🛵 Доставки" }],
-manager: [
+  manager: [
     { href: "/manager", label: "📋 Заказы" },
     { href: "/manager/menu", label: "🍕 Меню" },
     { href: "/kitchen", label: "👨‍🍳 Кухня" },

@@ -1,7 +1,8 @@
 import AccessDenied from "@/components/AccessDenied";
-import { categories, orders, orderTotal, products, promos, users } from "@/lib/data";
+import { categories, orderTotal, products, promos, users } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
+import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
@@ -12,6 +13,7 @@ export default async function AdminPage() {
     return <AccessDenied allowed={routeRoles["/admin"]} />;
   }
 
+  const orders = getOrders();
   const paid = orders.filter((o) => o.status !== "CANCELLED");
   const revenue = paid.reduce((sum, o) => sum + orderTotal(o), 0);
   const avgCheck = paid.length ? Math.round(revenue / paid.length) : 0;
