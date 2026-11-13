@@ -5,15 +5,11 @@ import { getStoredCart, summarize } from "@/lib/cart";
 import { changeQuantity, removeFromCart } from "@/lib/cart-actions";
 import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
-<<<<<<< HEAD
 import { FREE_DELIVERY_FROM } from "@/lib/menu";
 import { hasPreviousOrders } from "@/lib/orders";
-=======
 import { Minus, Plus, X } from "lucide-react";
 
-const DELIVERY_FEE = 500;
-const FREE_DELIVERY_FROM = 8000;
->>>>>>> origin/main
+
 
 export default async function CartPage() {
   const { role, user } = await getSession();
@@ -27,43 +23,12 @@ export default async function CartPage() {
         <h1>Корзина</h1>
       </div>
 
-<<<<<<< HEAD
       {s.lines.length === 0 ? (
         <div className="card stack" style={{ alignItems: "flex-start" }}>
           <p className="muted">В корзине пока пусто.</p>
           <Link href="/catalog" className="btn btn-primary">
             Выбрать в меню
           </Link>
-=======
-      <div className="cart-layout">
-        <div className="card">
-          {lines.map(({ item, product }) => (
-            <div key={`${item.productId}-${item.size ?? ""}`} className="cart-item">
-              <div className="pic">
-                <ProductImage src={product.image} emoji={product.emoji} alt={product.name} />
-              </div>
-              <div className="info">
-                <h3>{product.name}</h3>
-                <p className="muted small">{item.size ?? "Стандартная порция"}</p>
-              </div>
-<div className="qty">
-  <button type="button" aria-label="Уменьшить">
-    <Minus size={16} />
-  </button>
-  <span>{item.quantity}</span>
-  <button type="button" aria-label="Увеличить">
-    <Plus size={16} />
-  </button>
-</div>
-              <div className="price" style={{ minWidth: 90, textAlign: "right" }}>
-                {formatPrice(product.price * item.quantity)}
-              </div>
-<button type="button" className="btn btn-ghost btn-sm" aria-label="Удалить">
-  <X size={16} />
-</button>
-            </div>
-          ))}
->>>>>>> origin/main
         </div>
       ) : (
         <div className="cart-layout">

@@ -7,11 +7,7 @@ import { formatDate, formatPrice, formatTime } from "@/lib/labels";
 import { courierDeliver, courierPickUp, courierTake } from "@/lib/order-actions";
 import { getOrders, getOrdersByCourier, getOrdersByStatus } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
-<<<<<<< HEAD
-=======
-import { orderTotal } from "@/lib/data";
 import { MessageSquare } from "lucide-react";
->>>>>>> origin/main
 
 // Курьер видит только свои заказы и минимум данных клиента.
 export default async function CourierPage() {
@@ -74,19 +70,14 @@ export default async function CourierPage() {
                   </div>
                 </div>
               </div>
-<<<<<<< HEAD
-              {o.comment && <div className="ticket note">💬 {o.comment}</div>}
-              <form className="row" action={o.status === "ASSIGNED_TO_COURIER" ? courierPickUp : courierDeliver}>
-                <input type="hidden" name="id" value={o.id} />
-=======
               {o.comment && (
   <div className="ticket note icon-row">
     <MessageSquare size={18} />
     {o.comment}
   </div>
 )}
-              <div className="row">
->>>>>>> origin/main
+              <form className="row" action={o.status === "ASSIGNED_TO_COURIER" ? courierPickUp : courierDeliver}>
+                <input type="hidden" name="id" value={o.id} />
                 {o.status === "ASSIGNED_TO_COURIER" ? (
                   <button type="submit" className="btn btn-primary btn-sm">
                     Забрал, выехал

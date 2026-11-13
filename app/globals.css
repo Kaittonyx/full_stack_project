@@ -1671,3 +1671,8 @@ tr:last-child td {
 .lock-icon {
   color: var(--muted);
 }
+.icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
