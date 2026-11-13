@@ -1170,7 +1170,7 @@ tr:last-child td {
 }
 
 .modal-pic {
-  background: linear-gradient(135deg, #fff3e8, #ffe1d6);
+  background: linear-gradient(135deg, var(--pic-from), var(--pic-to));
   border-radius: 20px;
 }
 
