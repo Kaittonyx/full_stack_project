@@ -1649,6 +1649,7 @@ tr:last-child td {
   outline-offset: 2px;
 }
 
+<<<<<<< HEAD
 /* Тёмная тема: ползунок уезжает вправо на луну */
 :root[data-theme="dark"] .theme-toggle {
   background: linear-gradient(135deg, #2d2550 0%, #14102a 100%);
@@ -1681,3 +1682,27 @@ tr:last-child td {
     transition: none;
   }
 }
+=======
+[data-theme="dark"] .theme-toggle svg:last-child {
+  color: #8b9cff;
+}
+.icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.lock-icon {
+  color: var(--muted);
+}
+>>>>>>> origin/main

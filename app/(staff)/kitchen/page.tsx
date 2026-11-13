@@ -7,6 +7,7 @@ import { kitchenFinish, kitchenStart } from "@/lib/order-actions";
 import { getOrdersByStatus } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import type { OrderStatus } from "@/lib/types";
+import { MessageSquare } from "lucide-react";
 
 const columns: {
   statuses: OrderStatus[];
@@ -63,10 +64,19 @@ export default async function KitchenPage() {
                       </li>
                     ))}
                   </ul>
+<<<<<<< HEAD
                   {o.comment && <div className="note">💬 {o.comment}</div>}
                   {o.courierId && (
                     <div className="small muted">🛵 Курьер: {getUser(o.courierId)?.name}</div>
                   )}
+=======
+                  {o.comment && (
+  <div className="note icon-row">
+    <MessageSquare size={18} />
+    {o.comment}
+  </div>
+)}
+>>>>>>> origin/main
                   {col.action && (
                     <form action={col.action}>
                       <input type="hidden" name="id" value={o.id} />

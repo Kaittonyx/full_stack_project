@@ -21,7 +21,8 @@ export async function createProduct(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const price = Number(formData.get("price"));
-  const emoji = String(formData.get("emoji") ?? "").trim() || "🍕";
+  const emoji = "";
+  const image = String(formData.get("image") ?? "").trim() || undefined;
   const categoryId = String(formData.get("categoryId"));
   const sizes = String(formData.get("sizes") ?? "")
     .split(",")
@@ -36,6 +37,7 @@ export async function createProduct(formData: FormData) {
     name,
     description,
     price,
+    image,
     emoji,
     ingredients: [],
     sizes: sizes.length ? sizes : undefined,
