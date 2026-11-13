@@ -4,6 +4,7 @@ import { getSession } from "@/lib/demo-session";
 import { formatTime } from "@/lib/labels";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import type { OrderStatus } from "@/lib/types";
+import { MessageSquare } from "lucide-react";
 
 const columns: { status: OrderStatus; title: string; action: string | null }[] = [
   { status: "CONFIRMED", title: "Новые", action: "Принять в работу" },
@@ -52,7 +53,12 @@ export default async function KitchenPage() {
                       </li>
                     ))}
                   </ul>
-                  {o.comment && <div className="note">💬 {o.comment}</div>}
+                  {o.comment && (
+  <div className="note icon-row">
+    <MessageSquare size={18} />
+    {o.comment}
+  </div>
+)}
                   {col.action && (
                     <button type="button" className="btn btn-primary btn-sm">
                       {col.action}

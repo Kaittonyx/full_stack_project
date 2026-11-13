@@ -1624,3 +1624,22 @@ tr:last-child td {
 [data-theme="dark"] .theme-toggle svg:last-child {
   color: #8b9cff;
 }
+.icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.lock-icon {
+  color: var(--muted);
+}

@@ -3,6 +3,8 @@ import { categories, orders, orderTotal, products, promos, users } from "@/lib/d
 import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
+import { Star } from "lucide-react";
+import CategoryIcon from "@/components/CategoryIcon";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
 export default async function AdminPage() {
@@ -40,7 +42,10 @@ export default async function AdminPage() {
         </div>
         <div className="card stat">
           <div className="muted small">Рейтинг</div>
-          <div className="value">⭐ {promos.stats.rating}</div>
+          <div className="value icon-row">
+          <Star size={26} fill="currentColor" style={{ color: "var(--accent)" }} />
+          {promos.stats.rating}
+          </div>
           <div className="muted small">{promos.stats.reviews} отзывов</div>
         </div>
       </div>
@@ -78,9 +83,12 @@ export default async function AdminPage() {
           <tbody>
             {products.map((p) => (
               <tr key={p.id}>
-                <td>
-                  {p.emoji} <strong>{p.name}</strong>
-                </td>
+          <td>
+         <span className="icon-row">
+          <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
+          <strong>{p.name}</strong>
+            </span>
+              </td>
                 <td>{categories.find((c) => c.id === p.categoryId)?.name}</td>
                 <td>{formatPrice(p.price)}</td>
                 <td>

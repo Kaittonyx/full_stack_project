@@ -4,6 +4,7 @@ import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import { createProduct, deleteProduct } from "./actions";
+import CategoryIcon from "@/components/CategoryIcon";
 
 export default async function ManagerMenuPage() {
   const { role } = await getSession();
@@ -23,13 +24,13 @@ export default async function ManagerMenuPage() {
   <input name="name" placeholder="Название, например Барбекю" required />
   <input name="description" placeholder="Описание: Курица, лук, соус барбекю" />
   <input name="price" type="number" placeholder="Цена" required />
-  <input name="emoji" placeholder="Эмодзи, например 🍕" />
+<input name="image" placeholder="Путь к картинке: /images/pizzas/пицца.png" />
   <input name="sizes" placeholder="Размеры: 25 см, 30 см, 35 см" />
   <select name="categoryId">
     {categories.map((c) => (
-      <option key={c.id} value={c.id}>
-        {c.emoji} {c.name}
-      </option>
+<option key={c.id} value={c.id}>
+  {c.name}
+</option>
     ))}
   </select>
   <button type="submit" className="btn btn-primary">
@@ -50,9 +51,12 @@ export default async function ManagerMenuPage() {
           <tbody>
             {products.map((p) => (
               <tr key={p.id}>
-                <td>
-                  {p.emoji} <strong>{p.name}</strong>
-                </td>
+ <td>
+  <span className="icon-row">
+    <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
+    <strong>{p.name}</strong>
+  </span>
+</td>
                 <td>{formatPrice(p.price)}</td>
                 <td>
                   {p.isAvailable ? "В наличии" : <span className="muted">Нет в наличии</span>}

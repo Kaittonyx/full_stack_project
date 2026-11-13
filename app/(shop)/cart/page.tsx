@@ -3,6 +3,7 @@ import ProductImage from "@/components/ProductImage";
 import { cart, getProduct } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
+import { Minus, Plus, X } from "lucide-react";
 
 const DELIVERY_FEE = 500;
 const FREE_DELIVERY_FROM = 8000;
@@ -35,21 +36,21 @@ export default async function CartPage() {
                 <h3>{product.name}</h3>
                 <p className="muted small">{item.size ?? "Стандартная порция"}</p>
               </div>
-              <div className="qty">
-                <button type="button" aria-label="Уменьшить">
-                  −
-                </button>
-                <span>{item.quantity}</span>
-                <button type="button" aria-label="Увеличить">
-                  +
-                </button>
-              </div>
+<div className="qty">
+  <button type="button" aria-label="Уменьшить">
+    <Minus size={16} />
+  </button>
+  <span>{item.quantity}</span>
+  <button type="button" aria-label="Увеличить">
+    <Plus size={16} />
+  </button>
+</div>
               <div className="price" style={{ minWidth: 90, textAlign: "right" }}>
                 {formatPrice(product.price * item.quantity)}
               </div>
-              <button type="button" className="btn btn-ghost btn-sm" aria-label="Удалить">
-                ✕
-              </button>
+<button type="button" className="btn btn-ghost btn-sm" aria-label="Удалить">
+  <X size={16} />
+</button>
             </div>
           ))}
         </div>

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { categories, products } from "@/lib/data";
+import { Search } from "lucide-react";
+import CategoryIcon from "@/components/CategoryIcon";
 
 type SearchParams = Promise<{ category?: string; q?: string }>;
 
@@ -49,14 +51,15 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
             href={`/catalog?category=${c.slug}`}
             className={`chip ${activeCategory?.id === c.id ? "chip-active" : ""}`}
           >
-            {c.emoji} {c.name}
+            <CategoryIcon name={c.name} size={18} />
+            {c.name}
           </Link>
         ))}
       </div>
 
       {visible.length === 0 ? (
         <div className="card lock">
-          <div className="emoji">🔍</div>
+          <Search size={56} className="lock-icon" />
           <h3>Ничего не нашли</h3>
           <p className="muted">Попробуйте изменить запрос или выбрать другую категорию.</p>
         </div>

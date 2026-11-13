@@ -5,6 +5,7 @@ import { getSession } from "@/lib/demo-session";
 import { formatDate, formatPrice, formatTime } from "@/lib/labels";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import { orderTotal } from "@/lib/data";
+import { MessageSquare } from "lucide-react";
 
 // Макет панели курьера. Курьер видит только свои заказы и минимум данных клиента.
 export default async function CourierPage() {
@@ -63,7 +64,12 @@ export default async function CourierPage() {
                   </div>
                 </div>
               </div>
-              {o.comment && <div className="ticket note">💬 {o.comment}</div>}
+              {o.comment && (
+  <div className="ticket note icon-row">
+    <MessageSquare size={18} />
+    {o.comment}
+  </div>
+)}
               <div className="row">
                 {o.status === "ASSIGNED_TO_COURIER" ? (
                   <button type="button" className="btn btn-primary btn-sm">
