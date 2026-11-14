@@ -1,6 +1,8 @@
 import Link from "next/link";
+import NavIcon from "@/components/NavIcon";
+import type { NavLink } from "@/lib/permissions";
 import { getSession } from "@/lib/demo-session";
-import { cartCount } from "@/lib/data";
+import { getCartCount } from "@/lib/cart";
 import { roleLabels, staffNav } from "@/lib/permissions";
 import ThemeToggle from "./ThemeToggle";
 import {
@@ -14,12 +16,14 @@ import {
 export default async function Header() {
   const { role, user } = await getSession();
   const isShopper = role === "guest" || role === "customer";
-  const links = isShopper
-    ? [
-        { href: "/catalog", label: "Меню" },
-        { href: "/builder", label: "Конструктор" },
-      ]
-    : [{ href: "/catalog", label: "Меню" }, ...staffNav[role]];
+  const count = isShopper ? await getCartCount() : 0;
+  const links: NavLink[] = isShopper
+? [
+    { href: "/catalog", label: "Меню", icon: "menu" },
+    { href: "/builder", label: "Конструктор", icon: "builder" },
+    ...(role === "customer" ? [{ href: "/orders", label: "Мои заказы", icon: "orders" }] : []),
+  ]
+: [{ href: "/catalog", label: "Меню", icon: "menu" }, ...staffNav[role]];
 
   return (
     <header className="header">
@@ -32,11 +36,12 @@ export default async function Header() {
 
 
         <nav className="nav" aria-label="Основная навигация">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href}>
-              {l.label}
-            </Link>
-          ))}
+{links.map((l) => (
+  <Link key={l.href} href={l.href}>
+    {l.icon && <NavIcon name={l.icon} />}
+    {l.label}
+  </Link>
+))}
         </nav>
 
         <div className="header-actions">
@@ -46,7 +51,7 @@ export default async function Header() {
             <Link href="/cart" className="cart-link">
                 <ShoppingCart size={19} />
                 Корзина
-                <span className="cart-count">{cartCount()}</span>
+                <span className="cart-count">{count}</span>
             </Link>
           )}
 

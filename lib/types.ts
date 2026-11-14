@@ -59,8 +59,15 @@ export interface User {
 export interface OrderItem {
   name: string;
   size?: string;
+  details?: string; // тесто, допы, «без ...» — повар видит это на кухне
   quantity: number;
   unitPrice: number;
+}
+
+export interface StatusChange {
+  status: OrderStatus;
+  at: string;
+  by?: string; // id пользователя, сменившего статус
 }
 
 export interface Order {
@@ -77,10 +84,26 @@ export interface Order {
   addressComment: string;
   comment: string;
   courierId: string | null;
+  history?: StatusChange[];
 }
 
+// Строка корзины. Цена НЕ хранится: сервер пересчитывает её при показе и при оформлении.
 export interface CartItem {
-  productId: string;
+  key: string; // уникальный ключ комбинации товара и опций
+  kind?: "product" | "custom"; // custom — пицца из конструктора
+  productId?: string;
   size?: string;
+  dough?: string;
+  extras?: string[];
+  removed?: string[];
+  recipe?: PizzaRecipeInput; // только для custom
   quantity: number;
+}
+
+export interface PizzaRecipeInput {
+  doughId: string;
+  size: number;
+  sauceId: string | null;
+  cheeseIds: string[];
+  toppings: { ingredientId: string; count: number }[];
 }

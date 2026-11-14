@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useRef, useState, type DragEvent, type KeyboardEvent } from "react";
+import { useMemo, useRef, useState, useTransition, type DragEvent, type KeyboardEvent } from "react";
+import Link from "next/link";
+import { addCustomPizza } from "@/lib/cart-actions";
 import {
   MAX_PER_INGREDIENT,
   MAX_TOTAL_PIECES,
@@ -76,6 +78,8 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
   const [pieces, setPieces] = useState<Piece[]>([]);
   const [dragging, setDragging] = useState(false);
   const [readyPrice, setReadyPrice] = useState<number | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   const pizzaRef = useRef<HTMLDivElement>(null);
   const nextUid = useRef(1);
@@ -350,17 +354,31 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
             >
               Очистить начинку
             </button>
-            <button type="button" className="btn btn-primary" onClick={() => setReadyPrice(price)}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={pending || (cheeseIds.length === 0 && !sauceId && pieces.length === 0)}
+              onClick={() =>
+                startTransition(async () => {
+                  const res = await addCustomPizza(recipe);
+                  setFailed(!res.ok);
+                  setReadyPrice(res.ok ? (res.price ?? price) : null);
+                })
+              }
+            >
               В корзину · {formatPrice(price)}
             </button>
           </div>
 
           {readyPrice !== null && (
             <p className="notice">
-              Рецепт собран на {formatPrice(readyPrice)}. Корзина пока работает на демо-данных, поэтому пицца
-              добавится в неё после подключения API.
+              Пицца на {formatPrice(readyPrice)} добавлена в корзину.{" "}
+              <Link href="/cart" style={{ fontWeight: 700 }}>
+                Перейти в корзину
+              </Link>
             </p>
           )}
+          {failed && <p className="notice">Не удалось добавить пиццу: проверьте состав.</p>}
         </div>
       </section>
 

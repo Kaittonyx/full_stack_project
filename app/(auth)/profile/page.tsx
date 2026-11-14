@@ -1,7 +1,8 @@
 import Link from "next/link";
 import AccessDenied from "@/components/AccessDenied";
 import StatusBadge from "@/components/StatusBadge";
-import { orders, orderTotal } from "@/lib/data";
+import { orderTotal } from "@/lib/data";
+import { getOrdersByCustomer } from "@/lib/orders";
 import { getSession } from "@/lib/demo-session";
 import { formatDate, formatPrice, formatTime } from "@/lib/labels";
 import { canAccess, roleHome, roleLabels, routeRoles } from "@/lib/permissions";
@@ -13,7 +14,7 @@ export default async function ProfilePage() {
     return <AccessDenied allowed={routeRoles["/profile"]} />;
   }
 
-  const myOrders = orders.filter((o) => o.customerId === user.id);
+  const myOrders = getOrdersByCustomer(user.id);
 
   return (
     <div className="container section">

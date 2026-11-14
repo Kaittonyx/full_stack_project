@@ -1,13 +1,15 @@
 import AccessDenied from "@/components/AccessDenied";
+import AutoRefresh from "@/components/AutoRefresh";
 import StatusBadge from "@/components/StatusBadge";
-import { getUser, orders } from "@/lib/data";
+import { getUser, orderTotal } from "@/lib/data";
 import { getSession } from "@/lib/demo-session";
 import { formatDate, formatPrice, formatTime } from "@/lib/labels";
+import { courierDeliver, courierPickUp, courierTake } from "@/lib/order-actions";
+import { getOrders, getOrdersByCourier, getOrdersByStatus } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
-import { orderTotal } from "@/lib/data";
 import { MessageSquare } from "lucide-react";
 
-// Макет панели курьера. Курьер видит только свои заказы и минимум данных клиента.
+// Курьер видит только свои заказы и минимум данных клиента.
 export default async function CourierPage() {
   const { role, user } = await getSession();
 
@@ -16,13 +18,14 @@ export default async function CourierPage() {
   }
 
   const isCourier = role === "courier";
-  const scope = isCourier ? orders.filter((o) => o.courierId === user?.id) : orders.filter((o) => o.courierId);
+  const scope = isCourier ? getOrdersByCourier(user?.id ?? "") : getOrders().filter((o) => o.courierId);
   const active = scope.filter((o) => ["ASSIGNED_TO_COURIER", "OUT_FOR_DELIVERY"].includes(o.status));
   const history = scope.filter((o) => o.status === "DELIVERED");
-  const waiting = orders.filter((o) => o.status === "READY");
+  const waiting = getOrdersByStatus("READY").filter((o) => !o.courierId);
 
   return (
     <>
+      <AutoRefresh seconds={5} />
       <div className="page-head">
         <h1>Доставки</h1>
         <p className="muted">
@@ -37,12 +40,14 @@ export default async function CourierPage() {
 
         {active.map((o) => {
           const customer = getUser(o.customerId);
+          const courier = getUser(o.courierId);
           return (
             <article key={o.id} className="card stack">
               <div className="row-between">
                 <h3>{o.number}</h3>
                 <StatusBadge status={o.status} />
               </div>
+              {!isCourier && courier && <div className="small muted">Курьер: {courier.name}</div>}
               <div>
                 <div className="small muted">Адрес</div>
                 <div>{o.address}</div>
@@ -60,7 +65,8 @@ export default async function CourierPage() {
                 <div>
                   <div className="small muted">К оплате</div>
                   <div>
-                    {formatPrice(orderTotal(o))} · {o.paymentMethod}
+                    {o.paymentMethod === "Картой онлайн" ? "оплачено" : formatPrice(orderTotal(o))} ·{" "}
+                    {o.paymentMethod}
                   </div>
                 </div>
               </div>
@@ -70,17 +76,18 @@ export default async function CourierPage() {
     {o.comment}
   </div>
 )}
-              <div className="row">
+              <form className="row" action={o.status === "ASSIGNED_TO_COURIER" ? courierPickUp : courierDeliver}>
+                <input type="hidden" name="id" value={o.id} />
                 {o.status === "ASSIGNED_TO_COURIER" ? (
-                  <button type="button" className="btn btn-primary btn-sm">
+                  <button type="submit" className="btn btn-primary btn-sm">
                     Забрал, выехал
                   </button>
                 ) : (
-                  <button type="button" className="btn btn-green btn-sm">
+                  <button type="submit" className="btn btn-green btn-sm">
                     Доставлен
                   </button>
                 )}
-              </div>
+              </form>
             </article>
           );
         })}
@@ -89,7 +96,7 @@ export default async function CourierPage() {
       {waiting.length > 0 && (
         <div style={{ marginTop: 28 }}>
           <div className="section-head">
-            <h2>Готовы к выдаче</h2>
+            <h2>Готовы к выдаче, без курьера</h2>
           </div>
           <div className="table-wrap">
             <table>
@@ -108,9 +115,14 @@ export default async function CourierPage() {
                     </td>
                     <td>{o.address}</td>
                     <td className="right">
-                      <button type="button" className="btn btn-ghost btn-sm">
-                        Взять заказ
-                      </button>
+                      {isCourier && (
+                        <form action={courierTake}>
+                          <input type="hidden" name="id" value={o.id} />
+                          <button type="submit" className="btn btn-ghost btn-sm">
+                            Взять заказ
+                          </button>
+                        </form>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -135,6 +147,13 @@ export default async function CourierPage() {
               </tr>
             </thead>
             <tbody>
+              {history.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="muted">
+                    Пока нет доставленных заказов
+                  </td>
+                </tr>
+              )}
               {history.map((o) => (
                 <tr key={o.id}>
                   <td>
