@@ -365,6 +365,29 @@ h3 {
   cursor: pointer;
 }
 
+/* Временный демо-переключатель ролей: маленькая плашка под шапкой */
+.demo-bar-inner {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+.demo-bar .role-switcher {
+  gap: 8px;
+  padding: 3px 4px 3px 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.demo-bar .role-switcher select {
+  padding: 4px 8px;
+  background: var(--bg);
+  font-size: 0.8rem;
+}
+
 /* ===== Подвал ===== */
 
 .footer {
@@ -1592,38 +1615,24 @@ tr:last-child td {
   color: #e63946;
 }
 .theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  padding: 9px 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-
-  background: var(--card);
   color: var(--text);
-
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .theme-toggle svg {
+  position: relative;
+  z-index: 1; /* иконки поверх бегунка */
   width: 19px;
   height: 19px;
 }
 
-.theme-toggle:hover {
-  background: var(--surface);
-}
-
 [data-theme="light"] .theme-toggle svg:first-child {
-  color: #e9a23b;
+  color: #fff;
 }
 
 [data-theme="dark"] .theme-toggle svg:last-child {
-  color: #8b9cff;
+  color: #fff;
 }
+
 .icon-row {
   display: inline-flex;
   align-items: center;

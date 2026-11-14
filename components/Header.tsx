@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getSession } from "@/lib/demo-session";
 import { cartCount } from "@/lib/data";
 import { roleLabels, staffNav } from "@/lib/permissions";
-import RoleSwitcher from "./RoleSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import {
     Pizza,
@@ -42,7 +41,6 @@ export default async function Header() {
 
         <div className="header-actions">
           <ThemeToggle />
-          <RoleSwitcher current={role} />
 
           {isShopper && (
             <Link href="/cart" className="cart-link">
