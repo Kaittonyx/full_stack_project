@@ -3,9 +3,7 @@ import NavIcon from "@/components/NavIcon";
 import type { NavLink } from "@/lib/permissions";
 import { getSession } from "@/lib/demo-session";
 import { getCartCount } from "@/lib/cart";
-import { users } from "@/lib/data";
 import { roleLabels, staffNav } from "@/lib/permissions";
-import RoleSwitcher from "./RoleSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import {
     Pizza,
@@ -48,10 +46,6 @@ export default async function Header() {
 
         <div className="header-actions">
           <ThemeToggle />
-          <RoleSwitcher
-            currentId={user?.id ?? null}
-            users={users.map((u) => ({ id: u.id, name: u.name, role: u.role }))}
-          />
 
           {isShopper && (
             <Link href="/cart" className="cart-link">

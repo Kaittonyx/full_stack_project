@@ -365,6 +365,29 @@ h3 {
   cursor: pointer;
 }
 
+/* Временный демо-переключатель ролей: маленькая плашка под шапкой */
+.demo-bar-inner {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+.demo-bar .role-switcher {
+  gap: 8px;
+  padding: 3px 4px 3px 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.demo-bar .role-switcher select {
+  padding: 4px 8px;
+  background: var(--bg);
+  font-size: 0.8rem;
+}
+
 /* ===== Подвал ===== */
 
 .footer {
