@@ -1,76 +1,79 @@
 import Link from "next/link";
+import NavIcon from "@/components/NavIcon";
 import { getSession } from "@/lib/demo-session";
-import { cartCount } from "@/lib/data";
+import { getCartCount } from "@/lib/cart";
+import { users } from "@/lib/data";
 import { roleLabels, staffNav } from "@/lib/permissions";
+import type { NavLink } from "@/lib/permissions";
+import RoleSwitcher from "./RoleSwitcher";
 import ThemeToggle from "./ThemeToggle";
-import {
-    Pizza,
-    ShoppingCart,
-    UserRound,
-    LogIn,
-    UserPlus, UserCircle,
-} from "lucide-react";
+import { Pizza, ShoppingCart, UserRound, LogIn, UserPlus } from "lucide-react";
 
 export default async function Header() {
-  const { role, user } = await getSession();
-  const isShopper = role === "guest" || role === "customer";
-  const links = isShopper
-    ? [
-        { href: "/catalog", label: "Меню" },
-        { href: "/builder", label: "Конструктор" },
-      ]
-    : [{ href: "/catalog", label: "Меню" }, ...staffNav[role]];
+    const { role, user } = await getSession();
+    const isShopper = role === "guest" || role === "customer";
+    const count = isShopper ? await getCartCount() : 0;
+    const links: NavLink[] = isShopper
+        ? [
+            { href: "/catalog", label: "Меню", icon: "menu" },
+            { href: "/builder", label: "Конструктор", icon: "builder" },
+            ...(role === "customer" ? [{ href: "/orders", label: "Мои заказы", icon: "orders" }] : []),
+        ]
+        : [{ href: "/catalog", label: "Меню", icon: "menu" }, ...staffNav[role]];
 
-  return (
-    <header className="header">
-      <div className="container header-inner">
-          <Link href="/" className="logo">
-              <Pizza size={27} strokeWidth={2.2} />
-              LINK <span> Pizza</span>
-          </Link>
+    return (
+        <header className="header">
+            <div className="container header-inner">
+                <Link href="/" className="logo">
+                    <Pizza size={27} strokeWidth={2.2} />
+                    LINK <span> Pizza</span>
+                </Link>
 
+                <nav className="nav" aria-label="Основная навигация">
+                    {links.map((l) => (
+                        <Link key={l.href} href={l.href}>
+                            {l.icon && <NavIcon name={l.icon} />}
+                            {l.label}
+                        </Link>
+                    ))}
+                </nav>
 
+                <div className="header-actions">
+                    <ThemeToggle />
+                    <RoleSwitcher
+                        currentId={user?.id ?? null}
+                        users={users.map((u) => ({ id: u.id, name: u.name, role: u.role }))}
+                    />
 
-        <nav className="nav" aria-label="Основная навигация">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href}>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
+                    {isShopper && (
+                        <Link href="/cart" className="cart-link">
+                            <ShoppingCart size={19} />
+                            Корзина
+                            <span className="cart-count">{count}</span>
+                        </Link>
+                    )}
 
-        <div className="header-actions">
-          <ThemeToggle />
-
-          {isShopper && (
-            <Link href="/cart" className="cart-link">
-                <ShoppingCart size={19} />
-                Корзина
-                <span className="cart-count">{cartCount()}</span>
-            </Link>
-          )}
-
-          {user ? (
-            <Link href="/profile" className="user-chip" title={roleLabels[role]}>
+                    {user ? (
+                        <Link href="/profile" className="user-chip" title={roleLabels[role]}>
               <span className="avatar">
-                  <UserRound size={18} />
+                <UserRound size={18} />
               </span>
-              {user.name.split(" ")[0]}
-            </Link>
-          ) : (
-            <>
-              <Link href="/login" className="btn btn-ghost btn-sm">
-                  <LogIn size={16} />
-                Войти
-              </Link>
-              <Link href="/register" className="btn btn-primary btn-sm">
-                  <UserPlus size={16} />
-                Регистрация
-              </Link>
-            </>
-          )}
-        </div>
-      </div>
-    </header>
-  );
+                            {user.name.split(" ")[0]}
+                        </Link>
+                    ) : (
+                        <>
+                            <Link href="/login" className="btn btn-ghost btn-sm">
+                                <LogIn size={16} />
+                                Войти
+                            </Link>
+                            <Link href="/register" className="btn btn-primary btn-sm">
+                                <UserPlus size={16} />
+                                Регистрация
+                            </Link>
+                        </>
+                    )}
+                </div>
+            </div>
+        </header>
+    );
 }

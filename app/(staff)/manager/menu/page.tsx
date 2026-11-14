@@ -1,5 +1,6 @@
 import AccessDenied from "@/components/AccessDenied";
-import { categories, products } from "@/lib/data";
+import { categories } from "@/lib/data";
+import { getProducts } from "@/lib/products-db";
 import { getSession } from "@/lib/demo-session";
 import { formatPrice } from "@/lib/labels";
 import { canAccess, routeRoles } from "@/lib/permissions";
@@ -12,7 +13,7 @@ export default async function ManagerMenuPage() {
   if (!canAccess(role, "/manager/menu")) {
     return <AccessDenied allowed={routeRoles["/manager/menu"]} />;
   }
-
+  const products = await getProducts();
   return (
     <>
       <div className="page-head">

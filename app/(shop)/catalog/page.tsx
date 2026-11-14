@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
-import { categories, products } from "@/lib/data";
+import { categories } from "@/lib/data";
+import { getProducts } from "@/lib/products-db";
 import { Search } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
 
@@ -8,6 +9,7 @@ type SearchParams = Promise<{ category?: string; q?: string }>;
 
 export default async function CatalogPage({ searchParams }: { searchParams: SearchParams }) {
   const { category, q } = await searchParams;
+  const products = await getProducts();
   const query = (q ?? "").trim().toLowerCase();
   const activeCategory = categories.find((c) => c.slug === category);
 

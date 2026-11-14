@@ -1,7 +1,8 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import StatusBadge from "@/components/StatusBadge";
-import { categories, products, promos } from "@/lib/data";
+import { categories, promos } from "@/lib/data";
+import { getProducts } from "@/lib/products-db";
 import { getOrdersByCustomer } from "@/lib/orders";
 import { getSession } from "@/lib/demo-session";
 import { roleHome, roleLabels } from "@/lib/permissions";
@@ -22,6 +23,7 @@ import CategoryIcon from "@/components/CategoryIcon";
 
 const promoIcons = [Gift, Percent, Flame];
 export default async function HomePage() {
+  const products = await getProducts();
   const { role, user } = await getSession();
   const popular = products.filter((p) => p.isPopular).slice(0, 4);
   const isStaff = role !== "guest" && role !== "customer";
