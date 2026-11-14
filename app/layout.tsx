@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
 import Snow from "@/components/Snow";
+import DemoBar from "@/components/DemoBar";
 
 export const metadata: Metadata = {
   title: "LINK Pizza Delivery",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
       <Snow />
       <Header />
+      <DemoBar />
       <main>{children}</main>
       <Footer />
       </body>
