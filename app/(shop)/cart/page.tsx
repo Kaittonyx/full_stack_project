@@ -9,8 +9,6 @@ import { FREE_DELIVERY_FROM } from "@/lib/menu";
 import { hasPreviousOrders } from "@/lib/orders";
 import { Minus, Plus, X } from "lucide-react";
 
-
-
 export default async function CartPage() {
   const { role, user } = await getSession();
   const cart = await getStoredCart();
@@ -45,15 +43,21 @@ export default async function CartPage() {
                 <form action={changeQuantity} className="qty">
                   <input type="hidden" name="key" value={item.key} />
                   <button type="submit" name="delta" value="-1" aria-label="Уменьшить">
-  <Minus size={16} />
-</button>
-<span>{item.quantity}</span>
-<button type="submit" name="delta" value="1" aria-label="Увеличить">
-  <Plus size={16} />
-</button>
-<button type="submit" className="btn btn-ghost btn-sm" aria-label="Удалить">
-  <X size={16} />
-</button>
+                    <Minus size={16} />
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button type="submit" name="delta" value="1" aria-label="Увеличить">
+                    <Plus size={16} />
+                  </button>
+                </form>
+                <div className="price" style={{ minWidth: 90, textAlign: "right" }}>
+                  {formatPrice(unitPrice * item.quantity)}
+                </div>
+                <form action={removeFromCart}>
+                  <input type="hidden" name="key" value={item.key} />
+                  <button type="submit" className="btn btn-ghost btn-sm" aria-label="Удалить">
+                    <X size={16} />
+                  </button>
                 </form>
               </div>
             ))}
