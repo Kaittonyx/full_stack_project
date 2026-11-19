@@ -1066,45 +1066,6 @@ tr:last-child td {
   }
 }
 
-/* ===== Переключатель день/ночь ===== */
-
-.theme-toggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 64px;
-  height: 34px;
-  padding: 0 8px;
-  border: 2px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  font-size: 0.95rem;
-  cursor: pointer;
-}
-
-.theme-toggle::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--accent);
-  transition: transform 0.2s;
-}
-
-:root[data-theme="dark"] .theme-toggle::after {
-  transform: translateX(30px);
-}
-
-.theme-toggle span {
-  position: relative;
-  z-index: 1;
-  line-height: 1;
-}
-
 .product-pic {
   cursor: pointer;
 }
@@ -1193,7 +1154,7 @@ tr:last-child td {
 }
 
 .modal-pic {
-  background: linear-gradient(135deg, var(--pic-from), var(--pic-to));
+  background: linear-gradient(135deg, #fff3e8, #ffe1d6);
   border-radius: 20px;
 }
 
@@ -1614,23 +1575,134 @@ tr:last-child td {
   flex-shrink: 0;
   color: #e63946;
 }
+/* ===== Прогресс заказа ===== */
+.steps {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+.steps .step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  opacity: 0.5;
+}
+.steps .step.done {
+  opacity: 1;
+  font-weight: 600;
+}
+.steps .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+}
+.steps .step.done .dot {
+  background: var(--brand);
+  opacity: 1;
+}
+.ticket .detail {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+/* ===== Переключатель день/ночь ===== */
+/* Трек 68x36, ползунок 28px с отступом 4px: центры ползунка на 18px и 50px от левого края,
+   иконки стоят ровно в этих точках, поэтому ползунок всегда по центру иконки. */
 .theme-toggle {
-  color: var(--text);
+  position: relative;
+  flex-shrink: 0;
+  width: 68px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffe6b8 0%, #ffc47a 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Ползунок */
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fffaf0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
 }
 
 .theme-toggle svg {
-  position: relative;
-  z-index: 1; /* иконки поверх бегунка */
-  width: 19px;
-  height: 19px;
+  position: absolute;
+  top: 10px;
+  width: 16px;
+  height: 16px;
+  z-index: 1;
+  transition: color 0.3s ease, opacity 0.3s ease;
 }
 
-[data-theme="light"] .theme-toggle svg:first-child {
-  color: #fff;
+.theme-toggle svg:first-child {
+  left: 10px; /* солнце */
+  color: #e08a00;
 }
 
-[data-theme="dark"] .theme-toggle svg:last-child {
-  color: #fff;
+.theme-toggle svg:last-child {
+  left: 42px; /* луна */
+  color: #ffffff;
+  opacity: 0.85;
+}
+
+.theme-toggle:hover {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--brand-soft);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Тёмная тема: ползунок уезжает вправо на луну */
+:root[data-theme="dark"] .theme-toggle {
+  background: linear-gradient(135deg, #2d2550 0%, #14102a 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] .theme-toggle:hover {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 0 3px var(--brand-soft);
+}
+
+:root[data-theme="dark"] .theme-toggle::before {
+  transform: translateX(32px);
+  background: #e9e6ff;
+}
+
+:root[data-theme="dark"] .theme-toggle svg:first-child {
+  color: #ffffff;
+  opacity: 0.6;
+}
+
+:root[data-theme="dark"] .theme-toggle svg:last-child {
+  color: #4a4fd1;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle,
+  .theme-toggle::before,
+  .theme-toggle svg {
+    transition: none;
+  }
 }
 
 .icon-row {
@@ -1651,4 +1723,14 @@ tr:last-child td {
 }
 .lock-icon {
   color: var(--muted);
+}
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
