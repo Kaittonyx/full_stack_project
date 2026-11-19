@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { addProduct, removeProduct } from "@/lib/data";
+import { createProductInDb, deleteProductFromDb } from "@/lib/products-db";
 import { getSession } from "@/lib/demo-session";
 import { canAccess } from "@/lib/permissions";
 
@@ -10,10 +10,11 @@ export async function deleteProduct(formData: FormData) {
   if (!canAccess(role, "/manager/menu")) return;
 
   const id = String(formData.get("id"));
-  removeProduct(id);
+  await deleteProductFromDb(id);
 
   revalidatePath("/", "layout");
 }
+
 export async function createProduct(formData: FormData) {
   const { role } = await getSession();
   if (!canAccess(role, "/manager/menu")) return;
@@ -21,17 +22,17 @@ export async function createProduct(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const price = Number(formData.get("price"));
-  const emoji = "";
+  const emoji = String(formData.get("emoji") ?? "").trim();
   const image = String(formData.get("image") ?? "").trim() || undefined;
   const categoryId = String(formData.get("categoryId"));
   const sizes = String(formData.get("sizes") ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
 
   if (!name || !price) return;
 
-  addProduct({
+  await createProductInDb({
     id: `p-${Date.now()}`,
     categoryId,
     name,

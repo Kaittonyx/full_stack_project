@@ -1,10 +1,12 @@
 import AccessDenied from "@/components/AccessDenied";
-import { categories, orderTotal, products, promos, users } from "@/lib/data";
+import { categories, orderTotal, promos, users } from "@/lib/data";
+import { getProducts } from "@/lib/products-db";
 import { getSession } from "@/lib/demo-session";
+import Link from "next/link";
 import { formatPrice } from "@/lib/labels";
 import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
-import { Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
@@ -15,6 +17,7 @@ export default async function AdminPage() {
     return <AccessDenied allowed={routeRoles["/admin"]} />;
   }
 
+  const products = await getProducts();
   const orders = getOrders();
   const paid = orders.filter((o) => o.status !== "CANCELLED");
   const revenue = paid.reduce((sum, o) => sum + orderTotal(o), 0);
@@ -67,9 +70,10 @@ export default async function AdminPage() {
 
       <div className="section-head">
         <h2>Меню</h2>
-        <button type="button" className="btn btn-primary btn-sm">
-          + Добавить товар
-        </button>
+        <Link href="/manager/menu" className="btn btn-primary btn-sm">
+          <Plus size={16} />
+          Добавить товар
+        </Link>
       </div>
       <div className="table-wrap" style={{ marginBottom: 28 }}>
         <table>
