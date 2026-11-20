@@ -7,6 +7,7 @@ import { formatDate, formatPrice, formatTime } from "@/lib/labels";
 import { managerAssignCourier, managerCancel } from "@/lib/order-actions";
 import { getOrders, isFinal } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
+import ListFilters from "@/components/ListFilters";
 
 // Все заказы: можно сменить курьера до выезда и отменить заказ.
 export default async function ManagerPage() {
@@ -30,6 +31,7 @@ export default async function ManagerPage() {
         </p>
       </div>
 
+      <ListFilters options={[{ value: "active", label: "В работе" }, { value: "DELIVERED", label: "Доставлен" }, { value: "CANCELLED", label: "Отменён" }]}>
       <div className="table-wrap">
         <table>
           <thead>
@@ -55,7 +57,7 @@ export default async function ManagerPage() {
               const customer = getUser(o.customerId);
               const canReassign = o.status === "READY" || o.status === "ASSIGNED_TO_COURIER";
               return (
-                <tr key={o.id}>
+                <tr key={o.id} data-filter-item data-filter={isFinal(o.status) ? o.status : "active"}>
                   <td>
                     <strong>{o.number}</strong>
                   </td>
@@ -116,6 +118,7 @@ export default async function ManagerPage() {
           </tbody>
         </table>
       </div>
+      </ListFilters>
     </>
   );
 }

@@ -8,6 +8,7 @@ import { courierDeliver, courierPickUp, courierTake } from "@/lib/order-actions"
 import { getOrders, getOrdersByCourier, getOrdersByStatus } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import { MessageSquare } from "lucide-react";
+import ListFilters from "@/components/ListFilters";
 
 // Курьер видит только свои заказы и минимум данных клиента.
 export default async function CourierPage() {
@@ -33,6 +34,7 @@ export default async function CourierPage() {
         </p>
       </div>
 
+      <ListFilters options={[{ value: "ASSIGNED_TO_COURIER", label: "Назначен" }, { value: "OUT_FOR_DELIVERY", label: "В пути" }]}>
       <div className="stack" style={{ gap: 16 }}>
         {active.length === 0 && (
           <div className="card muted">Активных доставок нет. Ожидайте назначения.</div>
@@ -42,7 +44,7 @@ export default async function CourierPage() {
           const customer = getUser(o.customerId);
           const courier = getUser(o.courierId);
           return (
-            <article key={o.id} className="card stack">
+            <article key={o.id} className="card stack" data-filter-item data-filter={o.status}>
               <div className="row-between">
                 <h3>{o.number}</h3>
                 <StatusBadge status={o.status} />
@@ -92,12 +94,14 @@ export default async function CourierPage() {
           );
         })}
       </div>
+      </ListFilters>
 
       {waiting.length > 0 && (
         <div style={{ marginTop: 28 }}>
           <div className="section-head">
             <h2>Готовы к выдаче, без курьера</h2>
           </div>
+          <ListFilters>
           <div className="table-wrap">
             <table>
               <thead>
@@ -109,7 +113,7 @@ export default async function CourierPage() {
               </thead>
               <tbody>
                 {waiting.map((o) => (
-                  <tr key={o.id}>
+                  <tr key={o.id} data-filter-item>
                     <td>
                       <strong>{o.number}</strong>
                     </td>
@@ -129,6 +133,7 @@ export default async function CourierPage() {
               </tbody>
             </table>
           </div>
+          </ListFilters>
         </div>
       )}
 
@@ -136,6 +141,7 @@ export default async function CourierPage() {
         <div className="section-head">
           <h2>История доставок</h2>
         </div>
+        <ListFilters>
         <div className="table-wrap">
           <table>
             <thead>
@@ -155,7 +161,7 @@ export default async function CourierPage() {
                 </tr>
               )}
               {history.map((o) => (
-                <tr key={o.id}>
+                <tr key={o.id} data-filter-item>
                   <td>
                     <strong>{o.number}</strong>
                   </td>
@@ -169,6 +175,7 @@ export default async function CourierPage() {
             </tbody>
           </table>
         </div>
+        </ListFilters>
       </div>
     </>
   );

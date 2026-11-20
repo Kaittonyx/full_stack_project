@@ -8,6 +8,7 @@ import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
 import { BarChart3, ChevronDown, Plus, Star, Tag, Users } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
+import ListFilters from "@/components/ListFilters";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
 export default async function AdminPage() {
@@ -99,6 +100,13 @@ export default async function AdminPage() {
                 Добавить товар
               </Link>
             </div>
+            <ListFilters
+              options={categories.map((category) => ({
+                value: String(category.id),
+                label: category.name,
+              }))}
+              searchPlaceholder="Поиск товаров"
+            >
             <div className="table-wrap">
               <table>
                 <thead>
@@ -111,15 +119,22 @@ export default async function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => (
-                    <tr key={p.id}>
+                  {products.map((p) => {
+                    const category = categories.find((item) => item.id === p.categoryId);
+                    return (
+                    <tr
+                      key={p.id}
+                      data-filter-item
+                      data-filter={String(p.categoryId)}
+                      data-search={`${p.name} ${category?.name ?? ""}`}
+                    >
                       <td>
                         <span className="icon-row">
-                          <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
+                          <CategoryIcon name={category?.name ?? ""} />
                           <strong>{p.name}</strong>
                         </span>
                       </td>
-                      <td>{categories.find((c) => c.id === p.categoryId)?.name}</td>
+                      <td>{category?.name}</td>
                       <td>{formatPrice(p.price)}</td>
                       <td>
                         <span className={`badge ${p.isAvailable ? "badge-green" : "badge-gray"}`}>
@@ -132,10 +147,12 @@ export default async function AdminPage() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
+            </ListFilters>
           </div>
         </details>
 
@@ -149,6 +166,10 @@ export default async function AdminPage() {
             <ChevronDown size={18} aria-hidden="true" />
           </summary>
           <div className="admin-disclosure-content">
+            <ListFilters
+              options={Object.entries(roleLabels).map(([value, label]) => ({ value, label }))}
+              searchPlaceholder="Поиск сотрудников"
+            >
             <div className="table-wrap">
               <table>
                 <thead>
@@ -160,7 +181,12 @@ export default async function AdminPage() {
                 </thead>
                 <tbody>
                   {staff.map((u) => (
-                    <tr key={u.id}>
+                    <tr
+                      key={u.id}
+                      data-filter-item
+                      data-filter={u.role}
+                      data-search={`${u.name} ${u.email} ${roleLabels[u.role]}`}
+                    >
                       <td>{u.name}</td>
                       <td>
                         <span className="badge badge-blue">{roleLabels[u.role]}</span>
@@ -171,6 +197,7 @@ export default async function AdminPage() {
                 </tbody>
               </table>
             </div>
+            </ListFilters>
           </div>
         </details>
 
@@ -184,6 +211,13 @@ export default async function AdminPage() {
             <ChevronDown size={18} aria-hidden="true" />
           </summary>
           <div className="admin-disclosure-content">
+            <ListFilters
+              options={[
+                { value: "active", label: "Активные" },
+                { value: "inactive", label: "Завершённые" },
+              ]}
+              searchPlaceholder="Поиск промокодов"
+            >
             <div className="table-wrap">
               <table>
                 <thead>
@@ -196,7 +230,12 @@ export default async function AdminPage() {
                 </thead>
                 <tbody>
                   {promos.codes.map((c) => (
-                    <tr key={c.code}>
+                    <tr
+                      key={c.code}
+                      data-filter-item
+                      data-filter={c.isActive ? "active" : "inactive"}
+                      data-search={`${c.code} ${c.description}`}
+                    >
                       <td>
                         <strong>{c.code}</strong>
                       </td>
@@ -212,6 +251,7 @@ export default async function AdminPage() {
                 </tbody>
               </table>
             </div>
+            </ListFilters>
           </div>
         </details>
       </div>

@@ -6,6 +6,7 @@ import { formatPrice } from "@/lib/labels";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import { createProduct, deleteProduct } from "./actions";
 import CategoryIcon from "@/components/CategoryIcon";
+import ListFilters from "@/components/ListFilters";
 
 export default async function ManagerMenuPage() {
   const { role } = await getSession();
@@ -39,6 +40,7 @@ export default async function ManagerMenuPage() {
   </button>
 </form>
 
+      <ListFilters options={categories.map((c) => ({ value: c.id, label: c.name }))}>
       <div className="table-wrap">
         <table>
           <thead>
@@ -51,7 +53,7 @@ export default async function ManagerMenuPage() {
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} data-filter-item data-filter={p.categoryId}>
  <td>
   <span className="icon-row">
     <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
@@ -75,6 +77,7 @@ export default async function ManagerMenuPage() {
           </tbody>
         </table>
       </div>
+      </ListFilters>
     </>
   );
 }
