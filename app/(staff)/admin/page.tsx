@@ -8,6 +8,7 @@ import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
 import { Plus, Star } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
+import ListFilters from "@/components/ListFilters";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
 export default async function AdminPage() {
@@ -75,6 +76,7 @@ export default async function AdminPage() {
           Добавить товар
         </Link>
       </div>
+      <ListFilters options={categories.map((c) => ({ value: c.id, label: c.name }))}>
       <div className="table-wrap" style={{ marginBottom: 28 }}>
         <table>
           <thead>
@@ -88,7 +90,7 @@ export default async function AdminPage() {
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} data-filter-item data-filter={p.categoryId}>
           <td>
          <span className="icon-row">
           <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
@@ -112,12 +114,14 @@ export default async function AdminPage() {
           </tbody>
         </table>
       </div>
+      </ListFilters>
 
       <div className="grid grid-2">
         <div>
           <div className="section-head">
             <h2>Сотрудники</h2>
           </div>
+          <ListFilters options={Object.entries(roleLabels).map(([value, label]) => ({ value, label }))}>
           <div className="table-wrap">
             <table>
               <thead>
@@ -129,7 +133,7 @@ export default async function AdminPage() {
               </thead>
               <tbody>
                 {staff.map((u) => (
-                  <tr key={u.id}>
+                  <tr key={u.id} data-filter-item data-filter={u.role}>
                     <td>{u.name}</td>
                     <td>
                       <span className="badge badge-blue">{roleLabels[u.role]}</span>
@@ -140,12 +144,14 @@ export default async function AdminPage() {
               </tbody>
             </table>
           </div>
+          </ListFilters>
         </div>
 
         <div>
           <div className="section-head">
             <h2>Промокоды</h2>
           </div>
+          <ListFilters options={[{ value: "active", label: "Активные" }, { value: "inactive", label: "Завершённые" }]}>
           <div className="table-wrap">
             <table>
               <thead>
@@ -158,7 +164,7 @@ export default async function AdminPage() {
               </thead>
               <tbody>
                 {promos.codes.map((c) => (
-                  <tr key={c.code}>
+                  <tr key={c.code} data-filter-item data-filter={c.isActive ? "active" : "inactive"}>
                     <td>
                       <strong>{c.code}</strong>
                     </td>
@@ -174,6 +180,7 @@ export default async function AdminPage() {
               </tbody>
             </table>
           </div>
+          </ListFilters>
         </div>
       </div>
     </>

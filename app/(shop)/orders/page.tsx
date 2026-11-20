@@ -9,6 +9,7 @@ import { formatDate, formatPrice, formatTime } from "@/lib/labels";
 import { cancelMyOrder } from "@/lib/order-actions";
 import { getOrdersByCustomer } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
+import ListFilters from "@/components/ListFilters";
 
 type SearchParams = Promise<{ placed?: string }>;
 
@@ -41,11 +42,12 @@ export default async function OrdersPage({ searchParams }: { searchParams: Searc
           </Link>
         </div>
       ) : (
+        <ListFilters options={[{ value: "PENDING", label: "Ожидает" }, { value: "CONFIRMED", label: "Подтверждён" }, { value: "PREPARING", label: "Готовится" }, { value: "READY", label: "Готов" }, { value: "OUT_FOR_DELIVERY", label: "В пути" }, { value: "DELIVERED", label: "Доставлен" }, { value: "CANCELLED", label: "Отменён" }]}>
         <div className="stack" style={{ gap: 16 }}>
           {orders.map((o) => {
             const courier = getUser(o.courierId);
             return (
-              <article key={o.id} className="card stack">
+            <article key={o.id} className="card stack" data-filter-item data-filter={o.status}>
                 <div className="row-between">
                   <h3>
                     {o.number}{" "}
@@ -90,6 +92,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Searc
             );
           })}
         </div>
+        </ListFilters>
       )}
     </div>
   );

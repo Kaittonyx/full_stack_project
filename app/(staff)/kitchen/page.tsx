@@ -8,6 +8,7 @@ import { getOrdersByStatus } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import type { OrderStatus } from "@/lib/types";
 import { MessageSquare } from "lucide-react";
+import ListFilters from "@/components/ListFilters";
 
 const columns: {
   statuses: OrderStatus[];
@@ -49,8 +50,9 @@ export default async function KitchenPage() {
 
               {list.length === 0 && <p className="muted small">Пока пусто</p>}
 
+              <ListFilters options={[{ value: "comment", label: "С комментарием" }, { value: "courier", label: "Курьер назначен" }]}>
               {list.map((o) => (
-                <article key={o.id} className="ticket">
+                <article key={o.id} className="ticket" data-filter-item data-filter={`${o.comment ? "comment " : ""}${o.courierId ? "courier" : ""}`}>
                   <div className="row-between">
                     <strong>{o.number}</strong>
                     <span className="muted small">с {formatTime(o.createdAt)}</span>
@@ -78,6 +80,7 @@ export default async function KitchenPage() {
                   )}
                 </article>
               ))}
+              </ListFilters>
             </div>
           );
         })}
