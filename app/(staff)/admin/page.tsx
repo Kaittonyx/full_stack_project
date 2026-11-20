@@ -8,7 +8,6 @@ import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
 import { BarChart3, ChevronDown, Plus, Star, Tag, Users } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
-import Dialog from "@/components/Dialog";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
 export default async function AdminPage() {
@@ -83,7 +82,6 @@ export default async function AdminPage() {
           </div>
         </details>
 
-<<<<<<< HEAD
         <details className="card admin-disclosure">
           <summary>
             <CategoryIcon name="Пиццы" />
@@ -138,54 +136,6 @@ export default async function AdminPage() {
                 </tbody>
               </table>
             </div>
-=======
-        <div>
-          <div className="section-head">
-            <h2>Промокоды</h2>
-          </div>
-          <div className="card row-between">
-            <div>
-              <strong>
-                Активных: {promos.codes.filter((c) => c.isActive).length} из{" "}
-                {promos.codes.length}
-              </strong>
-              <p className="muted small">
-                Список кодов, условия и использование.
-              </p>
-            </div>
-            <Dialog buttonLabel="Открыть" title="Промокоды">
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Код</th>
-                      <th>Условие</th>
-                      <th>Использован</th>
-                      <th>Статус</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {promos.codes.map((c) => (
-                      <tr key={c.code}>
-                        <td>
-                          <strong>{c.code}</strong>
-                        </td>
-                        <td className="small">{c.description}</td>
-                        <td className="small">{c.usage}</td>
-                        <td>
-                          <span
-                            className={`badge ${c.isActive ? "badge-green" : "badge-gray"}`}
-                          >
-                            {c.isActive ? "Активен" : "Завершён"}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Dialog>
->>>>>>> 76df7fecab3b17eb6660287cbc4df153c9352de4
           </div>
         </details>
 
