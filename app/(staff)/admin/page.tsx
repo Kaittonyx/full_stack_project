@@ -8,6 +8,7 @@ import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
 import { Plus, Star } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
+import Dialog from "@/components/Dialog";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
 export default async function AdminPage() {
@@ -48,8 +49,12 @@ export default async function AdminPage() {
         <div className="card stat">
           <div className="muted small">Рейтинг</div>
           <div className="value icon-row">
-          <Star size={26} fill="currentColor" style={{ color: "var(--accent)" }} />
-          {promos.stats.rating}
+            <Star
+              size={26}
+              fill="currentColor"
+              style={{ color: "var(--accent)" }}
+            />
+            {promos.stats.rating}
           </div>
           <div className="muted small">{promos.stats.reviews} отзывов</div>
         </div>
@@ -61,7 +66,10 @@ export default async function AdminPage() {
           {promos.stats.salesByDay.map((d) => (
             <div key={d.day} className="bar">
               <span className="muted">{Math.round(d.amount / 1000)}к</span>
-              <div className="bar-fill" style={{ height: `${(d.amount / maxSales) * 100}%` }} />
+              <div
+                className="bar-fill"
+                style={{ height: `${(d.amount / maxSales) * 100}%` }}
+              />
               <span>{d.day}</span>
             </div>
           ))}
@@ -89,16 +97,23 @@ export default async function AdminPage() {
           <tbody>
             {products.map((p) => (
               <tr key={p.id}>
-          <td>
-         <span className="icon-row">
-          <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
-          <strong>{p.name}</strong>
-            </span>
-              </td>
+                <td>
+                  <span className="icon-row">
+                    <CategoryIcon
+                      name={
+                        categories.find((c) => c.id === p.categoryId)?.name ??
+                        ""
+                      }
+                    />
+                    <strong>{p.name}</strong>
+                  </span>
+                </td>
                 <td>{categories.find((c) => c.id === p.categoryId)?.name}</td>
                 <td>{formatPrice(p.price)}</td>
                 <td>
-                  <span className={`badge ${p.isAvailable ? "badge-green" : "badge-gray"}`}>
+                  <span
+                    className={`badge ${p.isAvailable ? "badge-green" : "badge-gray"}`}
+                  >
                     {p.isAvailable ? "Доступен" : "Скрыт"}
                   </span>
                 </td>
@@ -132,7 +147,9 @@ export default async function AdminPage() {
                   <tr key={u.id}>
                     <td>{u.name}</td>
                     <td>
-                      <span className="badge badge-blue">{roleLabels[u.role]}</span>
+                      <span className="badge badge-blue">
+                        {roleLabels[u.role]}
+                      </span>
                     </td>
                     <td className="small muted">{u.email}</td>
                   </tr>
@@ -146,33 +163,48 @@ export default async function AdminPage() {
           <div className="section-head">
             <h2>Промокоды</h2>
           </div>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Код</th>
-                  <th>Условие</th>
-                  <th>Использован</th>
-                  <th>Статус</th>
-                </tr>
-              </thead>
-              <tbody>
-                {promos.codes.map((c) => (
-                  <tr key={c.code}>
-                    <td>
-                      <strong>{c.code}</strong>
-                    </td>
-                    <td className="small">{c.description}</td>
-                    <td className="small">{c.usage}</td>
-                    <td>
-                      <span className={`badge ${c.isActive ? "badge-green" : "badge-gray"}`}>
-                        {c.isActive ? "Активен" : "Завершён"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="card row-between">
+            <div>
+              <strong>
+                Активных: {promos.codes.filter((c) => c.isActive).length} из{" "}
+                {promos.codes.length}
+              </strong>
+              <p className="muted small">
+                Список кодов, условия и использование.
+              </p>
+            </div>
+            <Dialog buttonLabel="Открыть" title="Промокоды">
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Код</th>
+                      <th>Условие</th>
+                      <th>Использован</th>
+                      <th>Статус</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {promos.codes.map((c) => (
+                      <tr key={c.code}>
+                        <td>
+                          <strong>{c.code}</strong>
+                        </td>
+                        <td className="small">{c.description}</td>
+                        <td className="small">{c.usage}</td>
+                        <td>
+                          <span
+                            className={`badge ${c.isActive ? "badge-green" : "badge-gray"}`}
+                          >
+                            {c.isActive ? "Активен" : "Завершён"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Dialog>
           </div>
         </div>
       </div>
