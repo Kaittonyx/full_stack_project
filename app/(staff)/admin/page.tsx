@@ -6,7 +6,7 @@ import Link from "next/link";
 import { formatPrice } from "@/lib/labels";
 import { getOrders } from "@/lib/orders";
 import { canAccess, roleLabels, routeRoles } from "@/lib/permissions";
-import { Plus, Star } from "lucide-react";
+import { BarChart3, ChevronDown, Plus, Star, Tag, Users } from "lucide-react";
 import CategoryIcon from "@/components/CategoryIcon";
 
 // Макет админ-панели: статистика, меню, сотрудники и промокоды.
@@ -32,149 +32,188 @@ export default async function AdminPage() {
         <p className="muted">Показатели работы пиццерии (демо-данные).</p>
       </div>
 
-      <div className="stats">
-        <div className="card stat">
-          <div className="muted small">Заказов</div>
-          <div className="value">{orders.length}</div>
-        </div>
-        <div className="card stat">
-          <div className="muted small">Выручка</div>
-          <div className="value">{formatPrice(revenue)}</div>
-        </div>
-        <div className="card stat">
-          <div className="muted small">Средний чек</div>
-          <div className="value">{formatPrice(avgCheck)}</div>
-        </div>
-        <div className="card stat">
-          <div className="muted small">Рейтинг</div>
-          <div className="value icon-row">
-          <Star size={26} fill="currentColor" style={{ color: "var(--accent)" }} />
-          {promos.stats.rating}
-          </div>
-          <div className="muted small">{promos.stats.reviews} отзывов</div>
-        </div>
-      </div>
+      <p className="muted admin-sections-hint">Выберите раздел, чтобы открыть его содержимое.</p>
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <h2 style={{ marginBottom: 16 }}>Продажи за неделю</h2>
-        <div className="bars">
-          {promos.stats.salesByDay.map((d) => (
-            <div key={d.day} className="bar">
-              <span className="muted">{Math.round(d.amount / 1000)}к</span>
-              <div className="bar-fill" style={{ height: `${(d.amount / maxSales) * 100}%` }} />
-              <span>{d.day}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="section-head">
-        <h2>Меню</h2>
-        <Link href="/manager/menu" className="btn btn-primary btn-sm">
-          <Plus size={16} />
-          Добавить товар
-        </Link>
-      </div>
-      <div className="table-wrap" style={{ marginBottom: 28 }}>
-        <table>
-          <thead>
-            <tr>
-              <th>Товар</th>
-              <th>Категория</th>
-              <th>Цена</th>
-              <th>Доступность</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id}>
-          <td>
-         <span className="icon-row">
-          <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
-          <strong>{p.name}</strong>
+      <div className="admin-sections">
+        <details className="card admin-disclosure">
+          <summary>
+            <BarChart3 size={22} aria-hidden="true" />
+            <span>
+              <strong>Статистика</strong>
+              <span className="muted small">Показатели и продажи за неделю</span>
             </span>
-              </td>
-                <td>{categories.find((c) => c.id === p.categoryId)?.name}</td>
-                <td>{formatPrice(p.price)}</td>
-                <td>
-                  <span className={`badge ${p.isAvailable ? "badge-green" : "badge-gray"}`}>
-                    {p.isAvailable ? "Доступен" : "Скрыт"}
-                  </span>
-                </td>
-                <td className="right">
-                  <button type="button" className="btn btn-ghost btn-sm">
-                    Изменить
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="grid grid-2">
-        <div>
-          <div className="section-head">
-            <h2>Сотрудники</h2>
-          </div>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Имя</th>
-                  <th>Роль</th>
-                  <th>Email</th>
-                </tr>
-              </thead>
-              <tbody>
-                {staff.map((u) => (
-                  <tr key={u.id}>
-                    <td>{u.name}</td>
-                    <td>
-                      <span className="badge badge-blue">{roleLabels[u.role]}</span>
-                    </td>
-                    <td className="small muted">{u.email}</td>
-                  </tr>
+            <ChevronDown size={18} aria-hidden="true" />
+          </summary>
+          <div className="admin-disclosure-content">
+            <div className="stats">
+              <div className="card stat">
+                <div className="muted small">Заказов</div>
+                <div className="value">{orders.length}</div>
+              </div>
+              <div className="card stat">
+                <div className="muted small">Выручка</div>
+                <div className="value">{formatPrice(revenue)}</div>
+              </div>
+              <div className="card stat">
+                <div className="muted small">Средний чек</div>
+                <div className="value">{formatPrice(avgCheck)}</div>
+              </div>
+              <div className="card stat">
+                <div className="muted small">Рейтинг</div>
+                <div className="value icon-row">
+                  <Star size={26} fill="currentColor" style={{ color: "var(--accent)" }} />
+                  {promos.stats.rating}
+                </div>
+                <div className="muted small">{promos.stats.reviews} отзывов</div>
+              </div>
+            </div>
+            <div className="card admin-sales">
+              <h2 style={{ marginBottom: 16 }}>Продажи за неделю</h2>
+              <div className="bars">
+                {promos.stats.salesByDay.map((d) => (
+                  <div key={d.day} className="bar">
+                    <span className="muted">{Math.round(d.amount / 1000)}к</span>
+                    <div className="bar-fill" style={{ height: `${(d.amount / maxSales) * 100}%` }} />
+                    <span>{d.day}</span>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
 
-        <div>
-          <div className="section-head">
-            <h2>Промокоды</h2>
-          </div>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Код</th>
-                  <th>Условие</th>
-                  <th>Использован</th>
-                  <th>Статус</th>
-                </tr>
-              </thead>
-              <tbody>
-                {promos.codes.map((c) => (
-                  <tr key={c.code}>
-                    <td>
-                      <strong>{c.code}</strong>
-                    </td>
-                    <td className="small">{c.description}</td>
-                    <td className="small">{c.usage}</td>
-                    <td>
-                      <span className={`badge ${c.isActive ? "badge-green" : "badge-gray"}`}>
-                        {c.isActive ? "Активен" : "Завершён"}
-                      </span>
-                    </td>
+        <details className="card admin-disclosure">
+          <summary>
+            <CategoryIcon name="Пиццы" />
+            <span>
+              <strong>Меню</strong>
+              <span className="muted small">{products.length} позиций</span>
+            </span>
+            <ChevronDown size={18} aria-hidden="true" />
+          </summary>
+          <div className="admin-disclosure-content">
+            <div className="section-head">
+              <h2>Меню</h2>
+              <Link href="/manager/menu" className="btn btn-primary btn-sm">
+                <Plus size={16} />
+                Добавить товар
+              </Link>
+            </div>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Товар</th>
+                    <th>Категория</th>
+                    <th>Цена</th>
+                    <th>Доступность</th>
+                    <th />
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {products.map((p) => (
+                    <tr key={p.id}>
+                      <td>
+                        <span className="icon-row">
+                          <CategoryIcon name={categories.find((c) => c.id === p.categoryId)?.name ?? ""} />
+                          <strong>{p.name}</strong>
+                        </span>
+                      </td>
+                      <td>{categories.find((c) => c.id === p.categoryId)?.name}</td>
+                      <td>{formatPrice(p.price)}</td>
+                      <td>
+                        <span className={`badge ${p.isAvailable ? "badge-green" : "badge-gray"}`}>
+                          {p.isAvailable ? "Доступен" : "Скрыт"}
+                        </span>
+                      </td>
+                      <td className="right">
+                        <button type="button" className="btn btn-ghost btn-sm">
+                          Изменить
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </details>
+
+        <details className="card admin-disclosure">
+          <summary>
+            <Users size={22} aria-hidden="true" />
+            <span>
+              <strong>Сотрудники</strong>
+              <span className="muted small">{staff.length} сотрудников</span>
+            </span>
+            <ChevronDown size={18} aria-hidden="true" />
+          </summary>
+          <div className="admin-disclosure-content">
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Имя</th>
+                    <th>Роль</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {staff.map((u) => (
+                    <tr key={u.id}>
+                      <td>{u.name}</td>
+                      <td>
+                        <span className="badge badge-blue">{roleLabels[u.role]}</span>
+                      </td>
+                      <td className="small muted">{u.email}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+
+        <details className="card admin-disclosure">
+          <summary>
+            <Tag size={22} aria-hidden="true" />
+            <span>
+              <strong>Промокоды</strong>
+              <span className="muted small">{promos.codes.length} кодов</span>
+            </span>
+            <ChevronDown size={18} aria-hidden="true" />
+          </summary>
+          <div className="admin-disclosure-content">
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Код</th>
+                    <th>Условие</th>
+                    <th>Использован</th>
+                    <th>Статус</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {promos.codes.map((c) => (
+                    <tr key={c.code}>
+                      <td>
+                        <strong>{c.code}</strong>
+                      </td>
+                      <td className="small">{c.description}</td>
+                      <td className="small">{c.usage}</td>
+                      <td>
+                        <span className={`badge ${c.isActive ? "badge-green" : "badge-gray"}`}>
+                          {c.isActive ? "Активен" : "Завершён"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
       </div>
     </>
   );

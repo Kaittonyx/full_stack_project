@@ -1575,6 +1575,88 @@ tr:last-child td {
   flex-shrink: 0;
   color: #e63946;
 }
+
+.admin-sections-hint {
+  margin: 0 0 16px;
+}
+
+.admin-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.admin-disclosure {
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.admin-disclosure[open] {
+  grid-column: 1 / -1;
+}
+
+.admin-disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 84px;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.admin-disclosure > summary:hover strong {
+  color: var(--brand);
+}
+
+.admin-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-disclosure > summary::marker {
+  content: "";
+}
+
+.admin-disclosure > summary:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: -3px;
+}
+
+.admin-disclosure > summary > svg {
+  flex: 0 0 auto;
+  color: var(--brand);
+}
+
+.admin-disclosure > summary > svg:last-child {
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+
+.admin-disclosure[open] > summary > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.admin-disclosure > summary > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-disclosure[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-disclosure-content {
+  padding: 20px;
+}
+
+.admin-sales {
+  margin-bottom: 0;
+}
+
 /* ===== Прогресс заказа ===== */
 .steps {
   list-style: none;
