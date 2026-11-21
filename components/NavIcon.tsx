@@ -1,9 +1,10 @@
-import { BarChart3, Bike, ChefHat, ClipboardList, Circle, Gamepad2, Pizza } from "lucide-react";
+import { BarChart3, Bike, ChefHat, ClipboardList, Circle, Gamepad2, LayoutDashboard, Pizza } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const icons: Record<string, LucideIcon> = {
   admin: BarChart3,
   orders: ClipboardList,
+  cabinet: LayoutDashboard,
   menu: Pizza,
   builder: Gamepad2,
   kitchen: ChefHat,

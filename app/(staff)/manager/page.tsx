@@ -8,9 +8,14 @@ import { managerAssignCourier, managerCancel } from "@/lib/order-actions";
 import { getOrders, isFinal } from "@/lib/orders";
 import { canAccess, routeRoles } from "@/lib/permissions";
 import ListFilters from "@/components/ListFilters";
+import OrderDetailsModal from "@/components/OrderDetailsModal";
+import SortSelect from "@/components/SortSelect";
 
 // Все заказы: можно сменить курьера до выезда и отменить заказ.
-export default async function ManagerPage() {
+type SearchParams = Promise<{ sort?: string }>;
+
+export default async function ManagerPage({ searchParams }: { searchParams: SearchParams }) {
+  const { sort } = await searchParams;
   const { role } = await getSession();
 
   if (!canAccess(role, "/manager")) {
@@ -18,7 +23,12 @@ export default async function ManagerPage() {
   }
 
   const couriers = users.filter((u) => u.role === "courier");
-  const orders = getOrders();
+  const orders = [...getOrders()].sort((a, b) => {
+    if (sort === "oldest") return a.createdAt.localeCompare(b.createdAt);
+    if (sort === "sum-desc") return orderTotal(b) - orderTotal(a);
+    if (sort === "sum-asc") return orderTotal(a) - orderTotal(b);
+    return b.createdAt.localeCompare(a.createdAt);
+  });
   const activeCount = orders.filter((o) => !isFinal(o.status)).length;
 
   return (
@@ -30,7 +40,14 @@ export default async function ManagerPage() {
           Всего: {orders.length}, в работе: {activeCount}
         </p>
       </div>
-
+      <SortSelect
+          options={[
+            { value: "newest", label: "Сначала новые" },
+            { value: "oldest", label: "Сначала старые" },
+            { value: "sum-desc", label: "Сначала дорогие" },
+            { value: "sum-asc", label: "Сначала дешёвые" },
+          ]}
+      />
       <ListFilters options={[{ value: "active", label: "В работе" }, { value: "DELIVERED", label: "Доставлен" }, { value: "CANCELLED", label: "Отменён" }]}>
       <div className="table-wrap">
         <table>
@@ -103,14 +120,17 @@ export default async function ManagerPage() {
                     )}
                   </td>
                   <td className="right">
-                    {!isFinal(o.status) && (
-                      <form action={managerCancel}>
-                        <input type="hidden" name="id" value={o.id} />
-                        <button type="submit" className="btn btn-ghost btn-sm">
-                          Отменить
-                        </button>
-                      </form>
-                    )}
+                    <div className="row" style={{ justifyContent: "flex-end", flexWrap: "nowrap" }}>
+                      <OrderDetailsModal order={o} />
+                      {!isFinal(o.status) && (
+                          <form action={managerCancel}>
+                            <input type="hidden" name="id" value={o.id} />
+                            <button type="submit" className="btn btn-ghost btn-sm">
+                              Отменить
+                            </button>
+                          </form>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

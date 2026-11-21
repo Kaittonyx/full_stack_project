@@ -49,3 +49,22 @@ export async function createProductInDb(product: Product): Promise<void> {
 export async function deleteProductFromDb(id: string): Promise<void> {
     await prisma.product.deleteMany({ where: { id } });
 }
+export async function updateProductInDb(
+    id: string,
+    patch: Omit<Product, "id" | "ingredients">,
+): Promise<void> {
+    await prisma.product.updateMany({
+        where: { id },
+        data: {
+            categoryId: patch.categoryId,
+            name: patch.name,
+            description: patch.description,
+            price: patch.price,
+            emoji: patch.emoji,
+            image: patch.image ?? null,
+            sizes: patch.sizes?.length ? patch.sizes.join(",") : null,
+            isAvailable: patch.isAvailable,
+            isPopular: patch.isPopular,
+        },
+    });
+}

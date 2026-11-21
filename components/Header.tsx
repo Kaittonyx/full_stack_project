@@ -3,7 +3,7 @@ import NavIcon from "@/components/NavIcon";
 import type { NavLink } from "@/lib/permissions";
 import { getSession } from "@/lib/demo-session";
 import { getCartCount } from "@/lib/cart";
-import { roleLabels, staffNav } from "@/lib/permissions";
+import { roleHome, roleLabels } from "@/lib/permissions";
 import ThemeToggle from "./ThemeToggle";
 import {
     Pizza,
@@ -23,12 +23,15 @@ export default async function Header() {
     { href: "/builder", label: "Конструктор", icon: "builder" },
     ...(role === "customer" ? [{ href: "/orders", label: "Мои заказы", icon: "orders" }] : []),
   ]
-: [{ href: "/catalog", label: "Меню", icon: "menu" }, ...staffNav[role]];
+      : [
+          { href: roleHome[role], label: "Мой кабинет", icon: "cabinet" },
+          { href: "/catalog", label: "Витрина сайта", icon: "menu" },
+      ];
 
   return (
     <header className="header">
       <div className="container header-inner">
-          <Link href="/" className="logo">
+          <Link href={isShopper ? "/" : roleHome[role]} className="logo">
               <Pizza size={27} strokeWidth={2.2} />
               LINK <span> Pizza</span>
           </Link>

@@ -54,14 +54,14 @@ export const staffNav: Record<Role, NavLink[]> = {
   courier: [{ href: "/courier", label: "Доставки", icon: "delivery" }],
   manager: [
     { href: "/manager", label: "Заказы", icon: "orders" },
-    { href: "/manager/menu", label: "Меню", icon: "menu" },
+    { href: "/manager/menu", label: "Управление меню", icon: "menu" },
     { href: "/kitchen", label: "Кухня", icon: "kitchen" },
     { href: "/courier", label: "Доставки", icon: "delivery" },
   ],
   admin: [
     { href: "/admin", label: "Админ-панель", icon: "admin" },
     { href: "/manager", label: "Заказы", icon: "orders" },
-    { href: "/manager/menu", label: "Меню", icon: "menu" },
+    { href: "/manager/menu", label: "Управление меню", icon: "menu" },
     { href: "/kitchen", label: "Кухня", icon: "kitchen" },
     { href: "/courier", label: "Доставки", icon: "delivery" },
   ],
