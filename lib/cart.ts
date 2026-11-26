@@ -13,6 +13,7 @@ import {
 } from "./menu";
 import { readDb, type StoredCart } from "./store";
 import type { CartItem, OrderItem, PizzaRecipeInput } from "./types";
+import { evaluatePromo, findPromo } from "./promos";
 
 const CART_COOKIE = "cart_id";
 
@@ -127,20 +128,14 @@ export const promoCodes: Record<string, { description: string }> = {
 
 // Возвращает скидку в ₸ или причину, по которой код не подходит.
 export function calcDiscount(
-  code: string | undefined,
-  subtotal: number,
-  hasPreviousOrders: boolean,
+    code: string | undefined,
+    subtotal: number,
+    hasPreviousOrders: boolean,
 ): { discount: number; error?: string } {
   if (!code) return { discount: 0 };
-  if (code === "WELCOME10") {
-    if (hasPreviousOrders) return { discount: 0, error: "Промокод действует только на первый заказ" };
-    return { discount: Math.round(subtotal * 0.1) };
-  }
-  if (code === "FRIDAY500") {
-    if (subtotal < 6000) return { discount: 0, error: "Промокод действует при заказе от 6 000 ₸" };
-    return { discount: 500 };
-  }
-  return { discount: 0, error: "Такого промокода нет" };
+  const promo = findPromo(code);
+  if (!promo) return { discount: 0, error: "Такого промокода нет" };
+  return evaluatePromo(promo, subtotal, hasPreviousOrders);
 }
 
 export interface CartSummary {

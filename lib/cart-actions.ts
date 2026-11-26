@@ -10,6 +10,7 @@ import { addons, doughNames, MAX_LINE_QTY } from "./menu";
 import { hasPreviousOrders } from "./orders";
 import { mutateDb, readDb } from "./store";
 import type { CartItem, PizzaRecipeInput } from "./types";
+import { describePromo, findPromo } from "./promos";
 
 async function ensureCartId(): Promise<string> {
   const existing = await getCartId();
@@ -130,7 +131,8 @@ export async function applyPromo(_prev: { message: string; ok: boolean }, formDa
     done();
     return { ok: true, message: "Промокод убран" };
   }
-  if (!promoCodes[code]) return { ok: false, message: "Такого промокода нет" };
+  const promo = findPromo(code);
+  if (!promo) return { ok: false, message: "Такого промокода нет" };
 
   const { user } = await getSession();
   const prev = user ? hasPreviousOrders(user.id) : false;
@@ -146,5 +148,5 @@ export async function applyPromo(_prev: { message: string; ok: boolean }, formDa
     if (db.carts[id]) db.carts[id].promo = code;
   });
   done();
-  return { ok: true, message: `Применён: ${promoCodes[code].description}` };
+  return { ok: true, message: `Применён: ${describePromo(promo)}` };
 }

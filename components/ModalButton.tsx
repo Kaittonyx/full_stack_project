@@ -21,11 +21,19 @@ export default function ModalButton({
 
     useEffect(() => {
         if (!open) return;
+
         const onKey = (e: KeyboardEvent) => {
             if (e.key === "Escape") setOpenedFor(null);
         };
         window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
+
+        const html = document.documentElement;
+        html.classList.add("modal-open");
+
+        return () => {
+            window.removeEventListener("keydown", onKey);
+            html.classList.remove("modal-open");
+        };
     }, [open]);
 
     return (
