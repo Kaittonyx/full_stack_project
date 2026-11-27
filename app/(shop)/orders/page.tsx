@@ -19,6 +19,7 @@ import { getReviewsByOrder } from "@/lib/reviews";
 
 type SearchParams = Promise<{ placed?: string; added?: string; skipped?: string }>;
 
+export const metadata = { title: "Мои заказы" };
 export default async function OrdersPage({ searchParams }: { searchParams: SearchParams }) {
     const { role, user } = await getSession();
     if (!user || !canAccess(role, "/orders")) {

@@ -35,41 +35,47 @@
     "name": "Нурлан Абенов",
     "email": "nurlan.cook@linkpizza.kz",
     "phone": "+7 701 200 00 01",
-    "role": "cook"
+    "role": "cook",
+    "status": "working"
   },
   {
     "id": "u-cook2",
     "name": "Сабина Омарова",
     "email": "sabina.cook@linkpizza.kz",
     "phone": "+7 701 200 00 02",
-    "role": "cook"
+    "role": "cook",
+    "status": "vacation"
   },
   {
     "id": "u-courier",
     "name": "Ерлан Тулегенов",
     "email": "erlan.courier@linkpizza.kz",
     "phone": "+7 701 300 00 01",
-    "role": "courier"
+    "role": "courier",
+    "status": "working"
   },
   {
     "id": "u-courier2",
     "name": "Асхат Мукашев",
     "email": "askhat.courier@linkpizza.kz",
     "phone": "+7 701 300 00 02",
-    "role": "courier"
+    "role": "courier",
+    "status": "sick_leave"
   },
   {
     "id": "u-manager",
     "name": "Мадина Касымова",
     "email": "madina.manager@linkpizza.kz",
     "phone": "+7 701 400 00 01",
-    "role": "manager"
+    "role": "manager",
+    "status": "working"
   },
   {
     "id": "u-admin",
     "name": "Алихан Бекенов",
     "email": "admin@linkpizza.kz",
     "phone": "+7 701 500 00 01",
-    "role": "admin"
+    "role": "admin",
+    "status": "working"
   }
 ]

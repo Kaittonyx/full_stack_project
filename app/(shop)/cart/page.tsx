@@ -9,6 +9,7 @@ import { FREE_DELIVERY_FROM } from "@/lib/menu";
 import { hasPreviousOrders } from "@/lib/orders";
 import { Minus, Plus, X } from "lucide-react";
 
+export const metadata = { title: "Корзина" };
 export default async function CartPage() {
   const { role, user } = await getSession();
   const cart = await getStoredCart();

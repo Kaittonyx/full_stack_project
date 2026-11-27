@@ -14,6 +14,7 @@ import DeleteProductModal from "@/components/DeleteProductModal";
 import ProductEditModal from "@/components/ProductEditModal";
 
 type SearchParams = Promise<{ sort?: string }>;
+export const metadata = { title: "Меню" };
 
 export default async function ManagerMenuPage({ searchParams }: { searchParams: SearchParams }) {
     const { sort } = await searchParams;

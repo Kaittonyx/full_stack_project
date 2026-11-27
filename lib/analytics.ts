@@ -145,3 +145,6 @@ export function buildSalesReport(all: FlatOrder[], fromRaw: string, toRaw: strin
         byPayment: [...payments.entries()].map(([method, v]) => ({ method, ...v })),
     };
 }
+export function dayKeyOf(iso: string): string {
+  return keyFromTs(new Date(iso).getTime());
+}
