@@ -10,6 +10,7 @@ import { canAccess, routeRoles } from "@/lib/permissions";
 import type { OrderStatus } from "@/lib/types";
 import { Bike, MessageSquare } from "lucide-react";
 
+export const metadata = { title: "Кухня" };
 const columns: {
     statuses: OrderStatus[];
     title: string;

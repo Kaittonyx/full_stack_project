@@ -30,6 +30,9 @@ export const roleHome: Record<Role, string> = {
 // Какие роли могут открыть раздел (по матрице доступа из ТЗ)
 export const routeRoles: Record<string, Role[]> = {
   "/kitchen": ["cook", "manager", "admin"],
+  "/admin/staff": ["admin"],
+  "/admin/analytics": ["admin"],
+  "/admin/promos": ["admin"],
   "/courier": ["courier", "manager", "admin"],
   "/manager": ["manager", "admin"],
   "/manager/menu": ["manager", "admin"],
@@ -46,23 +49,26 @@ export function canAccess(role: Role, path: string): boolean {
 
 
 
-export type NavLink = { href: string; label: string; icon?: string };
+export type NavLink = { href: string; label: string; icon?: string; group?: string };
 export const staffNav: Record<Role, NavLink[]> = {
   guest: [],
   customer: [],
   cook: [{ href: "/kitchen", label: "Кухня", icon: "kitchen" }],
   courier: [{ href: "/courier", label: "Доставки", icon: "delivery" }],
   manager: [
-    { href: "/manager", label: "Заказы", icon: "orders" },
-    { href: "/manager/menu", label: "Управление меню", icon: "menu" },
-    { href: "/kitchen", label: "Кухня", icon: "kitchen" },
-    { href: "/courier", label: "Доставки", icon: "delivery" },
+    { href: "/manager", label: "Заказы", icon: "orders", group: "Работа" },
+    { href: "/kitchen", label: "Кухня", icon: "kitchen", group: "Работа" },
+    { href: "/courier", label: "Доставки", icon: "delivery", group: "Работа" },
+    { href: "/manager/menu", label: "Управление меню", icon: "menu", group: "Управление" },
   ],
   admin: [
-    { href: "/admin", label: "Админ-панель", icon: "admin" },
-    { href: "/manager", label: "Заказы", icon: "orders" },
-    { href: "/manager/menu", label: "Управление меню", icon: "menu" },
-    { href: "/kitchen", label: "Кухня", icon: "kitchen" },
-    { href: "/courier", label: "Доставки", icon: "delivery" },
+    { href: "/admin", label: "Сводка",  icon: "admin", group: "Обзор" },
+    { href: "/admin/analytics", label: "Аналитика", icon: "analytics", group: "Обзор" },
+    { href: "/manager", label: "Заказы", icon: "orders", group: "Работа" },
+    { href: "/kitchen", label: "Кухня", icon: "kitchen", group: "Работа" },
+    { href: "/courier", label: "Доставки", icon: "delivery", group: "Работа" },
+    { href: "/manager/menu", label: "Меню", icon: "menu", group: "Управление" },
+    { href: "/admin/staff", label: "Сотрудники", icon: "staff", group: "Управление" },
+    { href: "/admin/promos", label: "Промокоды", icon: "promos", group: "Управление" },
   ],
 };

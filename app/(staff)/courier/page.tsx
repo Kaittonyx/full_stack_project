@@ -11,6 +11,7 @@ import { canAccess, routeRoles } from "@/lib/permissions";
 import { MessageSquare } from "lucide-react";
 
 // Курьер видит только свои заказы и минимум данных клиента.
+export const metadata = { title: "Доставки" };
 export default async function CourierPage() {
     const { role, user } = await getSession();
 

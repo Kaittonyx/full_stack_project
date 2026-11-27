@@ -7,7 +7,7 @@ import Snow from "@/components/Snow";
 import DemoBar from "@/components/DemoBar";
 
 export const metadata: Metadata = {
-  title: "LINK Pizza Delivery",
+title: { default: "LINK Pizza", template: "%s · LINK Pizza" },
   description: "Заказ пиццы с доставкой: меню, конструктор пиццы и кабинеты сотрудников.",
 };
 

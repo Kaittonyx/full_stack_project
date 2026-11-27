@@ -20,7 +20,7 @@ const PAD_R = 14;
 const PAD_T = 16;
 const PAD_B = 30;
 
-type Tab = "overview" | "dishes" | "time" | "ratings";
+export type Tab = "overview" | "dishes" | "time" | "ratings";
 
 const TABS: { id: Tab; label: string }[] = [
     { id: "overview", label: "Обзор" },
@@ -43,12 +43,20 @@ function shortMoney(v: number) {
 
 const fmt = (key: string) => key.split("-").reverse().join(".");
 
-function Details({ orders, ratings }: { orders: FlatOrder[]; ratings: RatingsReport }) {
+export function SalesDetails({
+  orders,
+  ratings,
+  initialTab = "overview",
+}: {
+  orders: FlatOrder[];
+  ratings: RatingsReport;
+  initialTab?: Tab;
+}) {
     const start = lastDays(7);
     const [from, setFrom] = useState(start.from);
     const [to, setTo] = useState(start.to);
     const [hover, setHover] = useState<number | null>(null);
-    const [tab, setTab] = useState<Tab>("overview");
+    const [tab, setTab] = useState<Tab>(initialTab);
     const today = todayKey();
 
     const presets = [
@@ -409,7 +417,7 @@ export default function SalesDetailsModal({
 }) {
     return (
         <ModalButton label="Подробнее" title="Аналитика продаж" className="btn btn-primary btn-sm">
-            <Details orders={orders} ratings={ratings} />
+            <SalesDetails orders={orders} ratings={ratings} />
         </ModalButton>
     );
 }
