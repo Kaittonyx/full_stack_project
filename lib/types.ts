@@ -53,8 +53,11 @@ export interface User {
   email: string;
   phone: string;
   role: Exclude<Role, "guest">;
+  status?: EmployeeStatus;
   addresses?: Address[];
 }
+
+export type EmployeeStatus = "working" | "vacation" | "sick_leave" | "dismissed";
 
 export interface OrderItem {
   name: string;
