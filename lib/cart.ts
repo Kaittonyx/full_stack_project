@@ -121,21 +121,16 @@ export function isValidRecipe(r: PizzaRecipeInput): boolean {
 
 // ===== Итоги корзины =====
 
-export const promoCodes: Record<string, { description: string }> = {
-  WELCOME10: { description: "−10% на первый заказ" },
-  FRIDAY500: { description: "−500 ₸ при заказе от 6 000 ₸" },
-};
-
 // Возвращает скидку в ₸ или причину, по которой код не подходит.
-export function calcDiscount(
+export async function calcDiscount(
     code: string | undefined,
     subtotal: number,
     hasPreviousOrders: boolean,
-): { discount: number; error?: string } {
+): Promise<{ discount: number; error?: string }> {
   if (!code) return { discount: 0 };
-  const promo = findPromo(code);
+  const promo = await findPromo(code);
   if (!promo) return { discount: 0, error: "Такого промокода нет" };
-  return evaluatePromo(promo, subtotal, hasPreviousOrders);
+  return await evaluatePromo(promo, subtotal, hasPreviousOrders);
 }
 
 export interface CartSummary {
@@ -148,13 +143,13 @@ export interface CartSummary {
   total: number;
 }
 
-export function summarize(cart: StoredCart, hasPreviousOrders: boolean): CartSummary {
+export async function summarize(cart: StoredCart, hasPreviousOrders: boolean): Promise<CartSummary> {
   const lines = cart.items.flatMap((i) => {
     const l = priceItem(i);
     return l ? [l] : [];
   });
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.item.quantity, 0);
-  const { discount, error } = calcDiscount(cart.promo, subtotal, hasPreviousOrders);
+  const { discount, error } = await calcDiscount(cart.promo, subtotal, hasPreviousOrders);
   const afterDiscount = subtotal - discount;
   const deliveryFee = lines.length === 0 || afterDiscount >= FREE_DELIVERY_FROM ? 0 : DELIVERY_FEE;
   return {

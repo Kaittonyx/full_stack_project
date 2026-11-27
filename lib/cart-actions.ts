@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { calcDiscount, getCartId, isValidRecipe, promoCodes, priceItem } from "./cart";
+import { calcDiscount, getCartId, isValidRecipe, priceItem } from "./cart";
 import { products } from "./data";
 import { getSession } from "./demo-session";
 import { addons, doughNames, MAX_LINE_QTY } from "./menu";
@@ -131,7 +131,7 @@ export async function applyPromo(_prev: { message: string; ok: boolean }, formDa
     done();
     return { ok: true, message: "Промокод убран" };
   }
-  const promo = findPromo(code);
+  const promo = await findPromo(code);
   if (!promo) return { ok: false, message: "Такого промокода нет" };
 
   const { user } = await getSession();
@@ -141,7 +141,7 @@ export async function applyPromo(_prev: { message: string; ok: boolean }, formDa
     if (!cart) return 0;
     return cart.items.reduce((sum, i) => sum + (priceItem(i)?.unitPrice ?? 0) * i.quantity, 0);
   });
-  const check = calcDiscount(code, subtotal, prev);
+  const check = await calcDiscount(code, subtotal, prev);
   if (check.error) return { ok: false, message: check.error };
 
   mutateDb((db) => {

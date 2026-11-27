@@ -12,7 +12,7 @@ import { Minus, Plus, X } from "lucide-react";
 export default async function CartPage() {
   const { role, user } = await getSession();
   const cart = await getStoredCart();
-  const s = summarize(cart, user ? hasPreviousOrders(user.id) : false);
+  const s = await summarize(cart, user ? hasPreviousOrders(user.id) : false);
   const canOrder = role === "customer" && s.lines.length > 0 && !s.promoError;
 
   return (

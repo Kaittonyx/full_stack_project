@@ -1,9 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { todayKey } from "./analytics";
-
-const DIR = join(process.cwd(), ".data");
-const FILE = join(DIR, "promos.json");
+import { prisma } from "./prisma";
 
 export interface Promo {
     code: string;
@@ -18,46 +14,21 @@ export interface Promo {
     createdAt: string;
 }
 
-const DEFAULTS: Promo[] = [
-    {
-        code: "WELCOME10",
-        kind: "percent",
-        value: 10,
-        minSubtotal: 0,
-        firstOrderOnly: true,
-        usageLimit: 0,
-        used: 0,
-        isActive: true,
-        createdAt: "2026-01-01T00:00:00.000Z",
-    },
-    {
-        code: "FRIDAY500",
-        kind: "fixed",
-        value: 500,
-        minSubtotal: 6000,
-        firstOrderOnly: false,
-        usageLimit: 0,
-        used: 0,
-        isActive: true,
-        createdAt: "2026-01-01T00:00:00.000Z",
-    },
-];
+type Row = Awaited<ReturnType<typeof prisma.promo.findMany>>[number];
 
-function write(list: Promo[]) {
-    mkdirSync(DIR, { recursive: true });
-    writeFileSync(FILE, JSON.stringify(list, null, 2), "utf-8");
-}
-
-function read(): Promo[] {
-    try {
-        if (!existsSync(FILE)) {
-            write(DEFAULTS);
-            return DEFAULTS;
-        }
-        return JSON.parse(readFileSync(FILE, "utf-8")) as Promo[];
-    } catch {
-        return DEFAULTS;
-    }
+function toPromo(row: Row): Promo {
+    return {
+        code: row.code,
+        kind: row.kind === "fixed" ? "fixed" : "percent",
+        value: row.value,
+        minSubtotal: row.minSubtotal,
+        firstOrderOnly: row.firstOrderOnly,
+        usageLimit: row.usageLimit,
+        used: row.used,
+        expiresAt: row.expiresAt ? row.expiresAt.toISOString().slice(0, 10) : undefined,
+        isActive: row.isActive,
+        createdAt: row.createdAt.toISOString(),
+    };
 }
 
 const money = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
@@ -69,13 +40,14 @@ export function describePromo(p: Promo): string {
     return parts.join(" ");
 }
 
-export function getPromos(): Promo[] {
-    return read();
+export async function getPromos(): Promise<Promo[]> {
+    const rows = await prisma.promo.findMany({ orderBy: { createdAt: "asc" } });
+    return rows.map(toPromo);
 }
 
-export function findPromo(code: string): Promo | undefined {
-    const needle = code.trim().toUpperCase();
-    return read().find((p) => p.code === needle);
+export async function findPromo(code: string): Promise<Promo | undefined> {
+    const row = await prisma.promo.findUnique({ where: { code: code.trim().toUpperCase() } });
+    return row ? toPromo(row) : undefined;
 }
 
 export function promoStatus(p: Promo): { label: string; tone: "green" | "gray" | "red"; active: boolean } {
@@ -113,12 +85,12 @@ export type PromoInput = {
     expiresAt?: string;
 };
 
-export function createPromo(input: PromoInput): { ok: true } | { ok: false; error: string } {
+export async function createPromo(input: PromoInput): Promise<{ ok: true } | { ok: false; error: string }> {
     const code = input.code.trim().toUpperCase();
     if (!/^[A-Z0-9_-]{3,20}$/.test(code)) {
         return { ok: false, error: "Код: от 3 до 20 символов, латинские буквы, цифры, - и _" };
     }
-    if (read().some((p) => p.code === code)) return { ok: false, error: "Такой код уже есть" };
+    if (await prisma.promo.findUnique({ where: { code } })) return { ok: false, error: "Такой код уже есть" };
 
     const max = input.kind === "percent" ? 90 : 50000;
     if (!Number.isInteger(input.value) || input.value < 1 || input.value > max) {
@@ -134,39 +106,31 @@ export function createPromo(input: PromoInput): { ok: true } | { ok: false; erro
         return { ok: false, error: "Дата окончания не может быть в прошлом" };
     }
 
-    const list = read();
-    list.push({
-        code,
-        kind: input.kind,
-        value: input.value,
-        minSubtotal: input.minSubtotal,
-        firstOrderOnly: input.firstOrderOnly,
-        usageLimit: input.usageLimit,
-        used: 0,
-        expiresAt: input.expiresAt,
-        isActive: true,
-        createdAt: new Date().toISOString(),
+    await prisma.promo.create({
+        data: {
+            code,
+            kind: input.kind,
+            value: input.value,
+            minSubtotal: input.minSubtotal,
+            firstOrderOnly: input.firstOrderOnly,
+            usageLimit: input.usageLimit,
+            expiresAt: input.expiresAt ? new Date(`${input.expiresAt}T00:00:00.000Z`) : null,
+        },
     });
-    write(list);
     return { ok: true };
 }
 
-export function setPromoActive(code: string, active: boolean): void {
-    const list = read();
-    const promo = list.find((p) => p.code === code);
-    if (!promo) return;
-    promo.isActive = active;
-    write(list);
+export async function setPromoActive(code: string, active: boolean): Promise<void> {
+    await prisma.promo.updateMany({ where: { code }, data: { isActive: active } });
 }
 
-export function deletePromo(code: string): void {
-    write(read().filter((p) => p.code !== code));
+export async function deletePromo(code: string): Promise<void> {
+    await prisma.promo.deleteMany({ where: { code } });
 }
 
-export function registerPromoUse(code: string): void {
-    const list = read();
-    const promo = list.find((p) => p.code === code.trim().toUpperCase());
-    if (!promo) return;
-    promo.used += 1;
-    write(list);
+export async function registerPromoUse(code: string): Promise<void> {
+    await prisma.promo.updateMany({
+        where: { code: code.trim().toUpperCase() },
+        data: { used: { increment: 1 } },
+    });
 }

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { registerPromoUse } from "./promos";
 import {
   getCartId,
   getStoredCart,
@@ -41,9 +42,10 @@ function idOf(formData: FormData): string {
   return String(formData.get("id") ?? "");
 }
 
-function finish(_result: OrderResult) {
+function finish(_result: OrderResult): void {
   // Ошибки (например, заказ уже взят другим) молча игнорируем: страница обновится
   // и покажет актуальное состояние.
+  void _result;
   refresh();
 }
 
@@ -69,7 +71,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
   }
 
   const cart = await getStoredCart();
-  const summary = summarize(cart, hasPreviousOrders(user.id));
+  const summary = await summarize(cart, hasPreviousOrders(user.id));
   if (summary.lines.length === 0) return { error: "Корзина пуста или товары больше недоступны" };
   if (summary.promoError) return { error: `Промокод: ${summary.promoError}. Уберите его в корзине.` };
 
@@ -83,6 +85,10 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     addressComment,
     comment,
   });
+
+  if (cart.promo && summary.discount > 0) {
+    await registerPromoUse(cart.promo);
+  }
 
   const cartId = await getCartId();
   if (cartId) {

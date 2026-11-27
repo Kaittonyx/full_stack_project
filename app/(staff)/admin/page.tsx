@@ -1,5 +1,5 @@
 import AccessDenied from "@/components/AccessDenied";
-import { getUser, orderTotal, promos, users } from "@/lib/data";
+import { getUser, orderTotal, users } from "@/lib/data";
 import { getProducts } from "@/lib/products-db";
 import { getSession } from "@/lib/demo-session";
 import Link from "next/link";
@@ -29,7 +29,7 @@ export default async function AdminPage() {
     const revenue = paid.reduce((sum, o) => sum + orderTotal(o), 0);
     const avgCheck = paid.length ? Math.round(revenue / paid.length) : 0;
     const staff = users.filter((u) => u.role !== "customer");
-    const promoList = getPromos();
+    const promoList = await getPromos();
     const flat = toFlat(orders);
     const ratings = buildRatingsReport((id) => getUser(id)?.name ?? "Курьер");
     const weekRange = lastDays(7);
@@ -94,12 +94,6 @@ export default async function AdminPage() {
                             </div>
                         </div>
                         <div className="card stat">
-                            <div className="muted small">Хит продаж</div>
-                            <div className="value">{top ? top[0] : "—"}</div>
-                            <div className="muted small">{top ? `${top[1]} шт.` : "Пока нет заказов"}</div>
-                        </div>
-
-                        <div className="card stat">
                             <div className="muted small">Рейтинг</div>
                             <div className="value icon-row">
                                 <Star size={26} fill="currentColor" style={{ color: "var(--accent)" }} />
@@ -113,25 +107,23 @@ export default async function AdminPage() {
                         </div>
                     </div>
                     <div className="card admin-sales">
-                        <div className="card admin-sales">
-                            <div className="row-between" style={{marginBottom: 16}}>
-                                <div>
-                                    <h2>Продажи за 7 дней</h2>
-                                    <span className="muted small">
+                        <div className="row-between" style={{marginBottom: 16}}>
+                            <div>
+                                <h2>Продажи за 7 дней</h2>
+                                <span className="muted small">
                 {week.orders} заказов · {formatPrice(week.revenue)}
             </span>
+                            </div>
+                            <SalesDetailsModal orders={flat} ratings={ratings}/>
+                        </div>
+                        <div className="bars">
+                            {week.series.map((d) => (
+                                <div key={d.key} className="bar">
+                                    <span className="muted">{d.revenue ? `${Math.round(d.revenue / 100) / 10}к` : "0"}</span>
+                                    <div className="bar-fill" style={{height: `${(d.revenue / weekMax) * 100}%`, minHeight: 4}}/>
+                                    <span>{d.label}</span>
                                 </div>
-                                <SalesDetailsModal orders={flat} ratings={ratings}/>
-                            </div>
-                            <div className="bars">
-                                {week.series.map((d) => (
-                                    <div key={d.key} className="bar">
-                                        <span className="muted">{d.revenue ? `${Math.round(d.revenue / 100) / 10}к` : "0"}</span>
-                                        <div className="bar-fill" style={{height: `${(d.revenue / weekMax) * 100}%`, minHeight: 4}}/>
-                                        <span>{d.label}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </details>

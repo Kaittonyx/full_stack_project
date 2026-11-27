@@ -1,6 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition, type DragEvent, type KeyboardEvent } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type DragEvent,
+  type KeyboardEvent,
+} from "react";
 import Link from "next/link";
 import { addCustomPizza } from "@/lib/cart-actions";
 import {
@@ -39,31 +46,55 @@ const DEFAULT_CHEESE = "rgba(255,228,140,.7)";
 
 const FIELD_RADIUS = 38; // в каких пределах (в % от пиццы) можно раскладывать начинку
 
-// Выбираем из нескольких случайных точек ту, что дальше всего от уже лежащих кусочков:
-// так начинка ложится равномерно, а не кучками.
-function pickSpot(existing: Piece[]): { x: number; y: number } {
+function makeSpot(
+  existing: Piece[],
+  uid: number,
+  at?: { x: number; y: number },
+) {
+  if (at) {
+    return {
+      ...at,
+      rot: (uid * 53) % 360,
+    };
+  }
+
   let best = { x: 50, y: 50 };
   let bestDist = -1;
+
   for (let i = 0; i < 14; i++) {
-    const r = FIELD_RADIUS * Math.sqrt(Math.random());
-    const a = Math.random() * Math.PI * 2;
+    const t1 = ((uid * 37 + i * 17) % 1000) / 1000;
+    const t2 = ((uid * 73 + i * 29) % 1000) / 1000;
+    const r = FIELD_RADIUS * Math.sqrt(t1);
+    const a = t2 * Math.PI * 2;
     const c = { x: 50 + r * Math.cos(a), y: 50 + r * Math.sin(a) };
-    const d = existing.reduce((min, p) => Math.min(min, Math.hypot(p.x - c.x, p.y - c.y)), Infinity);
+    const d = existing.reduce(
+      (min, p) => Math.min(min, Math.hypot(p.x - c.x, p.y - c.y)),
+      Infinity,
+    );
     if (d > bestDist) {
       best = c;
       bestDist = d;
     }
   }
-  return best;
+
+  return {
+    ...best,
+    rot: (uid * 53) % 360,
+  };
 }
 
 function PieceFace({ ingredient }: { ingredient: Ingredient }) {
   // Пепперони рисуем кружком: эмодзи 🍖 на пицце выглядит странно
-  if (ingredient.id === "i-pepperoni") return <span className="pb-pepperoni" aria-hidden="true" />;
+  if (ingredient.id === "i-pepperoni")
+    return <span className="pb-pepperoni" aria-hidden="true" />;
   return <span aria-hidden="true">{ingredient.emoji}</span>;
 }
 
-export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[] }) {
+export default function PizzaBuilder({
+  ingredients,
+}: {
+  ingredients: Ingredient[];
+}) {
   const sauces = ingredients.filter((i) => i.type === "sauce");
   const cheeses = ingredients.filter((i) => i.type === "cheese");
   const meats = ingredients.filter((i) => i.type === "meat");
@@ -74,7 +105,9 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
   const [doughId, setDoughId] = useState("classic");
   const [size, setSize] = useState(30);
   const [sauceId, setSauceId] = useState<string | null>(sauces[0]?.id ?? null);
-  const [cheeseIds, setCheeseIds] = useState<string[]>(cheeses[0] ? [cheeses[0].id] : []);
+  const [cheeseIds, setCheeseIds] = useState<string[]>(
+    cheeses[0] ? [cheeses[0].id] : [],
+  );
   const [pieces, setPieces] = useState<Piece[]>([]);
   const [dragging, setDragging] = useState(false);
   const [readyPrice, setReadyPrice] = useState<number | null>(null);
@@ -96,7 +129,10 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
       size,
       sauceId,
       cheeseIds,
-      toppings: Object.entries(counts).map(([ingredientId, count]) => ({ ingredientId, count })),
+      toppings: Object.entries(counts).map(([ingredientId, count]) => ({
+        ingredientId,
+        count,
+      })),
     }),
     [doughId, size, sauceId, cheeseIds, counts],
   );
@@ -111,18 +147,24 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
     `${size} см`,
     sauce?.name,
     ...cheeseIds.map((id) => byId.get(id)?.name),
-    ...recipe.toppings.map((t) => `${byId.get(t.ingredientId)?.name} ×${t.count}`),
+    ...recipe.toppings.map(
+      (t) => `${byId.get(t.ingredientId)?.name} ×${t.count}`,
+    ),
   ].filter(Boolean);
 
   function isFull(id: string) {
-    return (counts[id] ?? 0) >= MAX_PER_INGREDIENT || pieces.length >= MAX_TOTAL_PIECES;
+    return (
+      (counts[id] ?? 0) >= MAX_PER_INGREDIENT ||
+      pieces.length >= MAX_TOTAL_PIECES
+    );
   }
 
   function addPiece(id: string, at?: { x: number; y: number }) {
     const ingredient = byId.get(id);
     if (!ingredient || !ingredient.isAvailable || isFull(id)) return;
-    const spot = at ?? pickSpot(pieces);
-    setPieces([...pieces, { uid: nextUid.current++, ingredientId: id, ...spot, rot: Math.round(Math.random() * 360) }]);
+    const uid = nextUid.current++;
+    const spot = makeSpot(pieces, uid, at);
+    setPieces([...pieces, { uid, ingredientId: id, ...spot }]);
     setReadyPrice(null);
   }
 
@@ -137,7 +179,9 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
   }
 
   function toggleCheese(id: string) {
-    setCheeseIds((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
+    setCheeseIds((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
+    );
     setReadyPrice(null);
   }
 
@@ -186,12 +230,20 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
           </span>
           <span className="pb-ing-text">
             <strong>{i.name}</strong>
-            <small>{i.isAvailable ? `${formatPrice(i.price)} за порцию` : "Нет в наличии"}</small>
+            <small>
+              {i.isAvailable
+                ? `${formatPrice(i.price)} за порцию`
+                : "Нет в наличии"}
+            </small>
           </span>
         </div>
         {count > 0 && (
           <div className="pb-ing-count">
-            <button type="button" aria-label={`Убрать: ${i.name}`} onClick={() => removeOne(i.id)}>
+            <button
+              type="button"
+              aria-label={`Убрать: ${i.name}`}
+              onClick={() => removeOne(i.id)}
+            >
               −
             </button>
             <span>{count}</span>
@@ -275,7 +327,13 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
               <strong>
                 {s.emoji} {s.name}
               </strong>
-              <small>{!s.isAvailable ? "Нет в наличии" : s.price > 0 ? `+${formatPrice(s.price)}` : "Бесплатно"}</small>
+              <small>
+                {!s.isAvailable
+                  ? "Нет в наличии"
+                  : s.price > 0
+                    ? `+${formatPrice(s.price)}`
+                    : "Бесплатно"}
+              </small>
             </button>
           ))}
         </div>
@@ -291,12 +349,26 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
           }}
           onDrop={handleDrop}
         >
-          <div ref={pizzaRef} className="pb-pizza" data-dough={doughId} style={{ width: `${(size / 35) * 92}%` }}>
+          <div
+            ref={pizzaRef}
+            className="pb-pizza"
+            data-dough={doughId}
+            style={{ width: `${(size / 35) * 92}%` }}
+          >
             <div className="pb-crust" />
             <div className="pb-base" />
-            {sauce && <div className="pb-sauce" style={{ background: SAUCE_COLORS[sauce.id] ?? DEFAULT_SAUCE }} />}
+            {sauce && (
+              <div
+                className="pb-sauce"
+                style={{ background: SAUCE_COLORS[sauce.id] ?? DEFAULT_SAUCE }}
+              />
+            )}
             {cheeseIds.map((id) => (
-              <div key={id} className="pb-cheese" style={{ background: CHEESE_BG[id] ?? DEFAULT_CHEESE }} />
+              <div
+                key={id}
+                className="pb-cheese"
+                style={{ background: CHEESE_BG[id] ?? DEFAULT_CHEESE }}
+              />
             ))}
             <div className="pb-pieces">
               {pieces.map((p) => {
@@ -307,7 +379,11 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
                     key={p.uid}
                     type="button"
                     className="pb-piece"
-                    style={{ left: `${p.x}%`, top: `${p.y}%`, transform: `translate(-50%, -50%) rotate(${p.rot}deg)` }}
+                    style={{
+                      left: `${p.x}%`,
+                      top: `${p.y}%`,
+                      transform: `translate(-50%, -50%) rotate(${p.rot}deg)`,
+                    }}
                     aria-label={`Убрать: ${ingredient.name}`}
                     title="Нажмите, чтобы убрать"
                     onClick={() => removePiece(p.uid)}
@@ -323,11 +399,16 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
         <div className="card pb-summary">
           <div className="row-between">
             <div>
-              <div className="pb-stars" role="img" aria-label={`Оценка: ${score.stars} из 5`}>
+              <div
+                className="pb-stars"
+                role="img"
+                aria-label={`Оценка: ${score.stars} из 5`}
+              >
                 {"★".repeat(score.stars)}
                 <span>{"★".repeat(5 - score.stars)}</span>
               </div>
-              <strong>{score.title}</strong> <span className="muted small">· {score.points} баллов</span>
+              <strong>{score.title}</strong>{" "}
+              <span className="muted small">· {score.points} баллов</span>
             </div>
             <div className="price pb-price">{formatPrice(price)}</div>
           </div>
@@ -357,7 +438,10 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
             <button
               type="button"
               className="btn btn-primary"
-              disabled={pending || (cheeseIds.length === 0 && !sauceId && pieces.length === 0)}
+              disabled={
+                pending ||
+                (cheeseIds.length === 0 && !sauceId && pieces.length === 0)
+              }
               onClick={() =>
                 startTransition(async () => {
                   const res = await addCustomPizza(recipe);
@@ -378,15 +462,20 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
               </Link>
             </p>
           )}
-          {failed && <p className="notice">Не удалось добавить пиццу: проверьте состав.</p>}
+          {failed && (
+            <p className="notice">
+              Не удалось добавить пиццу: проверьте состав.
+            </p>
+          )}
         </div>
       </section>
 
       {/* ===== Справа: ингредиенты ===== */}
       <aside className="card pb-panel">
         <p className="small muted">
-          Перетащите ингредиент на пиццу или нажмите на него. Порция — {PORTION_SIZE} кусочков. Нажмите на кусочек
-          на пицце, чтобы убрать его.
+          Перетащите ингредиент на пиццу или нажмите на него. Порция —{" "}
+          {PORTION_SIZE} кусочков. Нажмите на кусочек на пицце, чтобы убрать
+          его.
         </p>
 
         <h3>Сыр</h3>
@@ -403,7 +492,9 @@ export default function PizzaBuilder({ ingredients }: { ingredients: Ingredient[
               <span className="pb-ing-icon">{c.emoji}</span>
               <span className="pb-ing-text">
                 <strong>{c.name}</strong>
-                <small>{c.isAvailable ? formatPrice(c.price) : "Нет в наличии"}</small>
+                <small>
+                  {c.isAvailable ? formatPrice(c.price) : "Нет в наличии"}
+                </small>
               </span>
             </button>
           ))}

@@ -13,7 +13,7 @@ export default async function CheckoutPage() {
     return <AccessDenied allowed={routeRoles["/checkout"]} />;
   }
 
-  const s = summarize(await getStoredCart(), hasPreviousOrders(user.id));
+  const s = await summarize(await getStoredCart(), hasPreviousOrders(user.id));
   if (s.lines.length === 0 || s.promoError) redirect("/cart");
 
   return (

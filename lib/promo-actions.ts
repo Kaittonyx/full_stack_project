@@ -15,7 +15,7 @@ async function allowed(): Promise<boolean> {
 export async function createPromoAction(_prev: PromoFormState, formData: FormData): Promise<PromoFormState> {
     if (!(await allowed())) return { ok: false, message: "Нет доступа" };
 
-    const result = createPromo({
+    const result = await createPromo({
         code: String(formData.get("code") ?? ""),
         kind: formData.get("kind") === "fixed" ? "fixed" : "percent",
         value: Number(formData.get("value")),
@@ -33,12 +33,12 @@ export async function createPromoAction(_prev: PromoFormState, formData: FormDat
 
 export async function togglePromoAction(formData: FormData) {
     if (!(await allowed())) return;
-    setPromoActive(String(formData.get("code") ?? ""), formData.get("active") === "on");
+    await setPromoActive(String(formData.get("code") ?? ""), formData.get("active") === "on");
     revalidatePath("/", "layout");
 }
 
 export async function deletePromoAction(formData: FormData) {
     if (!(await allowed())) return;
-    deletePromo(String(formData.get("code") ?? ""));
+    await deletePromo(String(formData.get("code") ?? ""));
     revalidatePath("/", "layout");
 }
